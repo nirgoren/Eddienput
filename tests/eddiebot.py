@@ -2,6 +2,7 @@ from pynput.keyboard import Key, Listener, Controller, KeyCode
 from clock import Clock
 import time
 import random
+import json
 from key_emulation import *
 
 WAIT_CONST = 'W'
@@ -13,6 +14,7 @@ WAIT_CONST = 'W'
 # S = 'numpad_5'
 # H = 'numpad_6'
 # D = 'numpad_3'
+# T = 'numpad_2'
 #
 # down = 'down'
 # left = 'left'
@@ -21,32 +23,23 @@ WAIT_CONST = 'W'
 
 #P1
 
-P = 'j'
-K = 'u'
-S = 'i'
-H = 'o'
-D = 'l'
-
-down = 's'
-left = 'a'
-right = 'd'
-up = Key.space
+# P = 'j'
+# K = 'u'
+# S = 'i'
+# H = 'o'
+# D = 'l'
+# T = 'k'
+#
+# down = 's'
+# left = 'a'
+# right = 'd'
+# up = Key.space
 
 clock = Clock(60)
 to_release = set()
 pressed = set()
 
-button_map = {
-    'P': P,
-    'K': K,
-    'S': S,
-    'H': H,
-    'D': D,
-    '2': down,
-    '4': left,
-    '6': right,
-    '8': up
-}
+button_map = {}
 
 
 def string_to_frames(s: str):
@@ -156,13 +149,19 @@ def on_press(key):
 
 
 if __name__ == "__main__":
+
+    f = open('config.json', 'r')
+    button_map.update(json.load(f))
+    f.close()
+
     queues = []
-    f = open('recordings.txt')
+    f = open('recordings.txt', 'r')
     for line in f:
         # ignore comment lines
         if line.startswith('#'):
             pass
         queues.append(string_to_frames(line))
+    f.close()
     # queues.append(string_to_frames('4 5 4 W20 4 5 4 W20 [4] W20 ]4[ 6 5 [6] W17 ]6[ W20 2 3 6 P W13 K+S+H'))
     # queues.append(string_to_frames('2 3 6 [K] W10 ]K['))
 
