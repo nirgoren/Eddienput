@@ -1,2 +1,5 @@
 tests/.idea/
 tests/__pycache__/
+build/
+src/.idea/
+src/__pycache__/
