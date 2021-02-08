@@ -48,9 +48,7 @@ def release_key(hexKeyCode):
     user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
 
 def to_key_code(c):
-    print(c)
     keyCode = key_code_map[c]
-    print(keyCode)
     return keyCode
 
 # https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes?redirectedfrom=MSDN

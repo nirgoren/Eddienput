@@ -4,18 +4,15 @@ from time import perf_counter
 class Clock:
 
     def __init__(self, fps):
-        self.start = perf_counter()
         self.frame_length = 1 / fps
+        self.next = perf_counter()+self.frame_length
 
-    @property
-    def tick(self):
-        return perf_counter() - self.start
-
-    def sleep(self, frame_count):
-        while self.tick < self.frame_length * frame_count:
+    def sleep(self):
+        while perf_counter() < self.next:
             pass
-            time.sleep(0)
-        self.start = perf_counter()
+            print("!")
+            #time.sleep(0)
+        self.next += self.frame_length
 
     def reset(self):
-        self.start = perf_counter()
+        self.next = perf_counter()+self.frame_length

@@ -39,8 +39,9 @@ clock = Clock(60)
 to_release = set()
 pressed = set()
 
-button_map = {
-}
+symbols_map = {}
+
+macros_map = {}
 
 
 def string_to_frames(s: str):
@@ -58,12 +59,9 @@ def string_to_frames(s: str):
                 # support for Wn with n being a natural number
                 res.extend(['W' for i in range(int(frame[1:]))])
     s = ' '.join(res)
-    # macros
-    s = s.replace('1', '2+4')
-    s = s.replace('3', '2+6')
-    s = s.replace('7', '4+8')
-    s = s.replace('9', '6+8')
-    s = s.replace('5', 'W')
+    # todo: define macros at the config file
+    for macro in macros_map:
+        s = s.replace(macro, macros_map[macro])
     frames = s.split(' ')
     for frame in frames:
         frame_moves = []
@@ -79,14 +77,15 @@ def string_to_frames(s: str):
                 elif button.startswith(']'):
                     command = 'release'
                     button = button[1:-1]
-                frame_moves.append((button_map[button], command))
+                frame_moves.append((symbols_map[button], command))
         moves.append(frame_moves)
     moves.append([])
     return moves
 
 
-def wait(frames):
-    clock.sleep(frames)
+def wait():
+    print("1")
+    clock.sleep()
 
 
 def reset():
@@ -97,14 +96,14 @@ def press(button):
     #t0 = time.perf_counter()
     press_key(to_key_code(button))
     #print(time.perf_counter() - t0)
-    print("pressed", button)
+    #print("pressed", button)
 
 
 def release(button):
     #t0 = time.perf_counter()
     release_key(to_key_code(button))
     #print(time.perf_counter() - t0)
-    print("released", button)
+    #print("released", button)
 
 
 def run_frame(frame):
@@ -129,7 +128,7 @@ def run_frame(frame):
         elif command == 'release':
             pressed.discard(button)
             release(button)
-    wait(1)
+    wait()
 
 
 def perform_actions(actions):
@@ -144,7 +143,7 @@ def do_action():
 
 
 def on_press(key):
-    print("received", str(key))
+    #print("received", str(key))
     if str(key) == "'*'":
         do_action()
 
@@ -152,7 +151,9 @@ def on_press(key):
 if __name__ == "__main__":
 
     f = open('config.json', 'r')
-    button_map.update(json.load(f))
+    j = json.load(f)
+    symbols_map.update(j["Symbols"])
+    macros_map.update(j["Macros"])
     f.close()
 
     queues = []
@@ -161,7 +162,8 @@ if __name__ == "__main__":
         # ignore comment lines
         if line.startswith('#'):
             pass
-        queues.append(string_to_frames(line))
+        else:
+            queues.append(string_to_frames(line))
     f.close()
     # queues.append(string_to_frames('4 5 4 W20 4 5 4 W20 [4] W20 ]4[ 6 5 [6] W17 ]6[ W20 2 3 6 P W13 K+S+H'))
     # queues.append(string_to_frames('2 3 6 [K] W10 ]K['))
