@@ -39,7 +39,8 @@ clock = Clock(60)
 to_release = set()
 pressed = set()
 
-button_map = {}
+button_map = {
+}
 
 
 def string_to_frames(s: str):
@@ -143,7 +144,7 @@ def do_action():
 
 
 def on_press(key):
-    #print("recieved", str(key))
+    print("received", str(key))
     if str(key) == "'*'":
         do_action()
 

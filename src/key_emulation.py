@@ -48,7 +48,9 @@ def release_key(hexKeyCode):
     user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
 
 def to_key_code(c):
-    keyCode = key_code_map[c[0]]
+    print(c)
+    keyCode = key_code_map[c]
+    print(keyCode)
     return keyCode
 
 # https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes?redirectedfrom=MSDN
@@ -91,16 +93,18 @@ key_code_map = {
     'y'                 : 0x59,
     'z'                 : 0x5A,
     'numpad_enter'      : 0x9C + 1024,
-    'numpad_1'          : 0x4F,
-    'numpad_2'          : 0x50,
-    'numpad_3'          : 0x51,
-    'numpad_4'          : 0x4B,
-    'numpad_5'          : 0x4C,
-    'numpad_6'          : 0x4D,
-    'numpad_7'          : 0x47,
-    'numpad_8'          : 0x48,
-    'numpad_9'          : 0x49,
-    'numpad_0'          : 0x52,
+    'numpad_1'          : 0x61,
+    'numpad_2'          : 0x62,
+    'numpad_3'          : 0x63,
+    'numpad_4'          : 0x64,
+    'numpad_5'          : 0x65,
+    'numpad_6'          : 0x66,
+    'numpad_7'          : 0x67,
+    'numpad_8'          : 0x68,
+    'numpad_9'          : 0x69,
+    'numpad_0'          : 0x60,
+    '-'                 : 0x6D,
+    '+'                 : 0x6B,
     'left'              : 0x25,
     'up'                : 0x26,
     'right'             : 0x27,

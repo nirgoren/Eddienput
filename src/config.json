@@ -1,12 +1,14 @@
 {
-  "P": "numpad_1",
-  "K": "numpad_4",
-  "S": "numpad_5",
-  "H": "numpad_6",
-  "D": "numpad_3",
-  "T": "numpad_2",
-  "2": "down",
-  "4": "left",
-  "6": "right",
-  "8": "up"
+  "P": "j",
+  "K": "u",
+  "S": "i",
+  "H": "o",
+  "D": "l",
+  "T": "k",
+  "2": "s",
+  "4": "a",
+  "6": "d",
+  "8": "w",
+  "select": "-",
+  "start": "enter"
 }
