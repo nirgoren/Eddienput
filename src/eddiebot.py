@@ -45,7 +45,6 @@ def string_to_frames(s: str):
                 # support for Wn with n being a natural number
                 res.extend(['W' for i in range(int(frame[1:]))])
     s = ' '.join(res)
-    # todo: define macros at the config file
     for macro in macros_map:
         s = s.replace(macro, macros_map[macro])
     frames = s.split(' ')
