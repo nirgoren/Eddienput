@@ -6,6 +6,8 @@ import json
 from key_emulation import *
 
 WAIT_CONST = 'W'
+NEXT_CONST = 'next'
+COMMENT_SYMBOL = '#'
 
 #P2
 # P = 'numpad_1'
@@ -23,10 +25,9 @@ WAIT_CONST = 'W'
 clock = Clock(60)
 to_release = set()
 pressed = set()
-
 symbols_map = {}
-
 macros_map = {}
+repetitions = 1
 
 
 def string_to_frames(s: str):
@@ -121,11 +122,12 @@ def perform_actions(actions):
 
 
 def do_action():
-    for recordings in sequences:
-        if len(recordings) != 0:
-            r = random.randint(0, len(recordings) - 1)
-            clock.reset()
-            perform_actions(recordings[r])
+    for _ in range(repetitions):
+        for recordings in sequences:
+            if len(recordings) != 0:
+                r = random.randint(0, len(recordings) - 1)
+                clock.reset()
+                perform_actions(recordings[r])
 
 
 def on_press(key):
@@ -140,6 +142,7 @@ if __name__ == "__main__":
     j = json.load(f)
     symbols_map.update(j["Symbols"])
     macros_map.update(j["Macros"])
+    repetitions = j["Repetitions"]
     f.close()
 
     sequences = [[]]
@@ -147,9 +150,9 @@ if __name__ == "__main__":
     i = 0
     for line in f:
         # ignore comment lines
-        if line.startswith('#'):
+        if line.startswith(COMMENT_SYMBOL):
             pass
-        elif line.startswith('next'):
+        elif line.startswith(NEXT_CONST):
             i += 1
             sequences.append([])
             continue
