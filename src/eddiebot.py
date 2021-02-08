@@ -8,7 +8,6 @@ from key_emulation import *
 WAIT_CONST = 'W'
 
 #P2
-
 # P = 'numpad_1'
 # K = 'numpad_4'
 # S = 'numpad_5'
@@ -20,20 +19,6 @@ WAIT_CONST = 'W'
 # left = 'left'
 # right = 'right'
 # up = 'up'
-
-#P1
-
-# P = 'j'
-# K = 'u'
-# S = 'i'
-# H = 'o'
-# D = 'l'
-# T = 'k'
-#
-# down = 's'
-# left = 'a'
-# right = 'd'
-# up = Key.space
 
 clock = Clock(60)
 to_release = set()
@@ -84,7 +69,6 @@ def string_to_frames(s: str):
 
 
 def wait():
-    print("1")
     clock.sleep()
 
 
@@ -137,9 +121,11 @@ def perform_actions(actions):
 
 
 def do_action():
-    i = random.randint(0, len(queues)-1)
-    clock.reset()
-    perform_actions(queues[i])
+    for recordings in sequences:
+        if len(recordings) != 0:
+            r = random.randint(0, len(recordings) - 1)
+            clock.reset()
+            perform_actions(recordings[r])
 
 
 def on_press(key):
@@ -156,17 +142,20 @@ if __name__ == "__main__":
     macros_map.update(j["Macros"])
     f.close()
 
-    queues = []
+    sequences = [[]]
     f = open('recordings.txt', 'r')
+    i = 0
     for line in f:
         # ignore comment lines
         if line.startswith('#'):
             pass
+        elif line.startswith('next'):
+            i += 1
+            sequences.append([])
+            continue
         else:
-            queues.append(string_to_frames(line))
+            sequences[i].append(string_to_frames(line))
     f.close()
-    # queues.append(string_to_frames('4 5 4 W20 4 5 4 W20 [4] W20 ]4[ 6 5 [6] W17 ]6[ W20 2 3 6 P W13 K+S+H'))
-    # queues.append(string_to_frames('2 3 6 [K] W10 ]K['))
 
     with Listener(on_press=on_press) as listener:
         listener.join()
