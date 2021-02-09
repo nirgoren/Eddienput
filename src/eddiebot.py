@@ -3,31 +3,21 @@ from clock import Clock
 import time
 import random
 import json
-from key_emulation import *
+import pyxinput  # requires installation: https://github.com/shauleiz/vXboxInterface/releases
 
 WAIT_CONST = 'W'
 NEXT_CONST = 'next'
 COMMENT_SYMBOL = '#'
+FPS = 60
+REPETITIONS_DEFAULT = 1
 
-#P2
-# P = 'numpad_1'
-# K = 'numpad_4'
-# S = 'numpad_5'
-# H = 'numpad_6'
-# D = 'numpad_3'
-# T = 'numpad_2'
-#
-# down = 'down'
-# left = 'left'
-# right = 'right'
-# up = 'up'
-
-clock = Clock(60)
+clock = Clock(FPS)
 to_release = set()
-pressed = set()
 symbols_map = {}
 macros_map = {}
-repetitions = 1
+repetitions = REPETITIONS_DEFAULT
+MyVirtual = pyxinput.vController()
+sequences = [[]]
 
 
 def string_to_frames(s: str):
@@ -76,16 +66,16 @@ def reset():
     clock.reset()
 
 
-def press(button):
+def press(button, value):
     #t0 = time.perf_counter()
-    press_key(to_key_code(button))
+    MyVirtual.set_value(button, value)
     #print(time.perf_counter() - t0)
     #print("pressed", button)
 
 
 def release(button):
     #t0 = time.perf_counter()
-    release_key(to_key_code(button))
+    MyVirtual.set_value(button, 0)
     #print(time.perf_counter() - t0)
     #print("released", button)
 
@@ -95,22 +85,21 @@ def run_frame(frame):
     released = set()
     for button in to_release:
         if button not in frame_press_buttons:
-            pressed.discard(button)
             release(button)
             released.update({button})
     for button in released:
         to_release.discard(button)
     for button, command in frame:
+        value = 1
+        if not isinstance(button, str):
+            value = button['Dpad']
+            button = 'Dpad'
         if command == 'tap':
-            if button not in pressed:
-                to_release.update({button})
-                pressed.update({button})
-                press(button)
+            to_release.update({button})
+            press(button, value)
         elif command == 'press':
-            pressed.update({button})
-            press(button)
+            press(button, value)
         elif command == 'release':
-            pressed.discard(button)
             release(button)
     wait()
 
@@ -120,7 +109,7 @@ def perform_actions(actions):
         run_frame(frame)
 
 
-def do_action():
+def run_scenario():
     for _ in range(repetitions):
         for recordings in sequences:
             if len(recordings) != 0:
@@ -130,22 +119,29 @@ def do_action():
 
 
 def on_press(key):
-    #print("received", str(key))
-    if str(key) == "'*'":
-        do_action()
+    # print("received", str(key))
+    if str(key) == r"'\x12'":  # ctrl+r
+        print("Reloading script")
+        main()
+    if str(key) == r"<96>":
+        run_scenario()
+        print("Sequence complete")
 
 
-if __name__ == "__main__":
-
+def main():
+    global symbols_map
+    global macros_map
+    global repetitions
+    global sequences
     f = open('config.json', 'r')
     j = json.load(f)
-    symbols_map.update(j["Symbols"])
-    macros_map.update(j["Macros"])
+    symbols_map = j["Symbols"]
+    macros_map = j["Macros"]
     repetitions = j["Repetitions"]
+    recordings_file = j["Recordings_file"]
     f.close()
-
     sequences = [[]]
-    f = open('recordings.txt', 'r')
+    f = open(recordings_file, 'r')
     i = 0
     for line in f:
         # ignore comment lines
@@ -158,6 +154,10 @@ if __name__ == "__main__":
         else:
             sequences[i].append(string_to_frames(line))
     f.close()
+    print("Eddie is ready")
 
+if __name__ == "__main__":
+
+    main()
     with Listener(on_press=on_press) as listener:
         listener.join()
