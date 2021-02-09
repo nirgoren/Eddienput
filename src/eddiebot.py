@@ -4,6 +4,8 @@ import time
 import random
 import json
 import pyxinput  # requires installation: https://github.com/shauleiz/vXboxInterface/releases
+from PyQt5.QtWidgets import QApplication, QWidget
+import sys
 
 WAIT_CONST = 'W'
 NEXT_CONST = 'next'
@@ -17,7 +19,30 @@ REPETITIONS_DEFAULT = 1
 resets = 0
 clock = Clock(FPS)
 to_release = set()
-symbols_map = {}
+P1_directions_map = {"2": { "Dpad": 2 },
+                  "4": { "Dpad": 4 },
+                  "6": { "Dpad": 8 },
+                  "8": { "Dpad": 1 },
+                  "1": { "Dpad": 6 },
+                  "3": { "Dpad": 10 },
+                  "7": { "Dpad": 5 },
+                  "9": { "Dpad": 9 }
+                 }
+
+P2_directions_map = {"2": { "Dpad": 2 },
+                  "4": { "Dpad": 8 },
+                  "6": { "Dpad": 4 },
+                  "8": { "Dpad": 1 },
+                  "1": { "Dpad": 10 },
+                  "3": { "Dpad": 6 },
+                  "7": { "Dpad": 9 },
+                  "9": { "Dpad": 5 }
+                 }
+
+direction_maps = [P1_directions_map, P2_directions_map]
+direction_map_index = 0
+
+symbols_map = direction_maps[direction_map_index%len(direction_maps)]
 macros_map = {}
 repetitions = REPETITIONS_DEFAULT
 MyVirtual = pyxinput.vController()
@@ -66,31 +91,25 @@ def string_to_frames(s: str):
     return moves
 
 
-def wait():
-    clock.sleep()
-
-
-def reset():
-    clock.reset()
-
-
 def press(button, value):
     #t0 = time.perf_counter()
     MyVirtual.set_value(button, value)
     #print(time.perf_counter() - t0)
-    #print("pressed", button)
+    #print("pressed:", button, "value:", value)
 
 
 def release(button):
     #t0 = time.perf_counter()
     MyVirtual.set_value(button, 0)
     #print(time.perf_counter() - t0)
-    #print("released", button)
+    #print("released:", button)
 
 
 def run_frame(frame):
     frame_press_buttons = [x[0] for x in frame if x[1] != 'release']
+    frame_press_buttons = [x if isinstance(x, str) else 'Dpad' for x in frame_press_buttons]
     released = set()
+
     for button in to_release:
         if button not in frame_press_buttons:
             release(button)
@@ -110,7 +129,8 @@ def run_frame(frame):
             to_release.discard(button)
         elif command == 'release':
             release(button)
-    wait()
+    # wait for the next frame
+    clock.sleep()
 
 
 def perform_actions(actions):
@@ -128,16 +148,23 @@ def run_scenario():
 
 
 def on_press(key):
+    global direction_map_index
     # print("received", str(key))
     if str(key) == r"'\x12'":  # ctrl+r
         print("Reloading script")
-        main()
+        reset()
+    if str(key) == r"<49>":  # ctrl+1
+        direction_map_index = 0
+        print("Switching to P" + str(direction_map_index+1) + " side")
+    if str(key) == r"<50>":  # ctrl+2
+        direction_map_index = 1
+        print("Switching to P" + str(direction_map_index+1) + " side")
     if str(key) == r"<96>":
         run_scenario()
         print("Sequence complete")
 
 
-def main():
+def reset():
     global symbols_map
     global macros_map
     global repetitions
@@ -146,7 +173,8 @@ def main():
     resets += 1
     f = open('config.json', 'r')
     config = json.load(f)
-    symbols_map = config["Symbols"]
+    symbols_map = direction_maps[direction_map_index]
+    symbols_map.update(config["Symbols"])
     macros_map = config["Macros"]
     repetitions = config["Repetitions"]
     recordings_file = config["Recordings_file"]
@@ -185,6 +213,14 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    reset()
+    app = QApplication(sys.argv)
+
+    w = QWidget()
+    w.resize(250, 150)
+    w.move(300, 300)
+    w.setWindowTitle('EddieBot')
+    w.show()
     with Listener(on_press=on_press) as listener:
-        listener.join()
+        sys.exit(app.exec_())
+        #listener.join()
