@@ -12,7 +12,7 @@ class Clock:
         while perf_counter() < self.next:
             pass
             # time.sleep(0)
-        self.next += self.frame_length
+        self.next += self.frame_length + int(perf_counter()-self.next)
 
     def reset(self):
         self.next = perf_counter() + self.frame_length

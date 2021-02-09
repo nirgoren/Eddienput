@@ -126,6 +126,7 @@ def run_scenario():
                 clock.reset()
                 perform_actions(recordings[r])
 
+
 def on_press(key):
     # print("received", str(key))
     if str(key) == r"'\x12'":  # ctrl+r
@@ -155,16 +156,16 @@ def main():
     i = 0
     j = 0
     for line in f:
-        # ignore comment lines
-        if len(line) == 0:
+        # ignore empty lines
+        if len(line) == 0 or line.startswith('\n'):
             pass
+        # ignore comment lines
         elif line.startswith(COMMENT_SYMBOL):
             pass
         elif line.startswith(MIX_START) or line.startswith(MIX_END):
             i += 1
             j = -1
             sequences.append([''])
-            continue
         elif line.startswith(OPTION):
             j += 1
             if j > 0:
@@ -175,7 +176,7 @@ def main():
             sequences.append([''])
         else:
             sequences[i][j] = sequences[i][j]+line
-    #print(sequences)
+
     for i in range(len(sequences)):
         for j in range(len(sequences[i])):
             sequences[i][j] = string_to_frames(sequences[i][j])
