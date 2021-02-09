@@ -8,9 +8,13 @@ import pyxinput  # requires installation: https://github.com/shauleiz/vXboxInter
 WAIT_CONST = 'W'
 NEXT_CONST = 'next'
 COMMENT_SYMBOL = '#'
+MIX_START = 'startmix'
+OPTION = 'option'
+MIX_END = 'endmix'
 FPS = 60
 REPETITIONS_DEFAULT = 1
 
+resets = 0
 clock = Clock(FPS)
 to_release = set()
 symbols_map = {}
@@ -22,7 +26,11 @@ sequences = [[]]
 
 def string_to_frames(s: str):
     moves = []
-    s = s.replace('\n', '')
+    if s == '':
+        s = 'W'
+    if s.endswith('\n'):
+        s = s[:-1]
+    s = s.replace('\n', ' ')
     frames = s.split(' ')
     res = []
     for frame in frames:
@@ -118,7 +126,6 @@ def run_scenario():
                 clock.reset()
                 perform_actions(recordings[r])
 
-
 def on_press(key):
     # print("received", str(key))
     if str(key) == r"'\x12'":  # ctrl+r
@@ -134,28 +141,46 @@ def main():
     global macros_map
     global repetitions
     global sequences
+    global resets
+    resets += 1
     f = open('config.json', 'r')
-    j = json.load(f)
-    symbols_map = j["Symbols"]
-    macros_map = j["Macros"]
-    repetitions = j["Repetitions"]
-    recordings_file = j["Recordings_file"]
+    config = json.load(f)
+    symbols_map = config["Symbols"]
+    macros_map = config["Macros"]
+    repetitions = config["Repetitions"]
+    recordings_file = config["Recordings_file"]
     f.close()
-    sequences = [[]]
+    sequences = [['']]
     f = open(recordings_file, 'r')
     i = 0
+    j = 0
     for line in f:
         # ignore comment lines
-        if line.startswith(COMMENT_SYMBOL):
+        if len(line) == 0:
             pass
-        elif line.startswith(NEXT_CONST):
+        elif line.startswith(COMMENT_SYMBOL):
+            pass
+        elif line.startswith(MIX_START) or line.startswith(MIX_END):
             i += 1
-            sequences.append([])
+            j = -1
+            sequences.append([''])
             continue
+        elif line.startswith(OPTION):
+            j += 1
+            if j > 0:
+                sequences[i].append('')
+        elif line.startswith(MIX_END):
+            i += 1
+            j = 0
+            sequences.append([''])
         else:
-            sequences[i].append(string_to_frames(line))
+            sequences[i][j] = sequences[i][j]+line
+    #print(sequences)
+    for i in range(len(sequences)):
+        for j in range(len(sequences[i])):
+            sequences[i][j] = string_to_frames(sequences[i][j])
     f.close()
-    print("Eddie is ready")
+    print('Eddie is ready ('+str(resets)+')')
 
 
 if __name__ == "__main__":
