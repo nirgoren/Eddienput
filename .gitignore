@@ -4,3 +4,4 @@ build/
 src/.idea/
 src/__pycache__/
 test/
+dist/

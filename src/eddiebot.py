@@ -169,7 +169,9 @@ def on_press(key):
         print("Switching to P" + str(direction_map_index+1) + " side")
     if str(key) == r"<50>":  # ctrl+2
         direction_map_index = 1
+        reset()
         print("Switching to P" + str(direction_map_index+1) + " side")
+        reset()
     if str(key) == r"<96>":
         run_scenario()
         print("Sequence complete")
