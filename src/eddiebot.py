@@ -1,10 +1,12 @@
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPixmap
 from pynput.keyboard import Key, Listener, Controller, KeyCode
 from clock import Clock
 import time
 import random
 import json
 import pyxinput  # requires installation: https://github.com/shauleiz/vXboxInterface/releases
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel
 import sys
 import re
 
@@ -43,13 +45,13 @@ P2_directions_map = {"2": { "Dpad": 2 },
 direction_maps = [P1_directions_map, P2_directions_map]
 direction_map_index = 0
 
+recordings_file = None
 symbols_map = direction_maps[direction_map_index%len(direction_maps)]
 macros_map = {}
 repetitions = REPETITIONS_DEFAULT
-MyVirtual = pyxinput.vController()
+virtual_controller = pyxinput.vController()
 sequences = [[]]
 weights = [[]]
-
 
 def string_to_frames(s: str):
     moves = []
@@ -95,14 +97,14 @@ def string_to_frames(s: str):
 
 def press(button, value):
     #t0 = time.perf_counter()
-    MyVirtual.set_value(button, value)
+    virtual_controller.set_value(button, value)
     #print(time.perf_counter() - t0)
     #print("pressed:", button, "value:", value)
 
 
 def release(button):
     #t0 = time.perf_counter()
-    MyVirtual.set_value(button, 0)
+    virtual_controller.set_value(button, 0)
     #print(time.perf_counter() - t0)
     #print("released:", button)
 
@@ -160,39 +162,31 @@ def run_scenario():
 
 def on_press(key):
     global direction_map_index
-    # print("received", str(key))
+    #print("received", str(key))
     if str(key) == r"'\x12'":  # ctrl+r
         print("Reloading script")
         reset()
     if str(key) == r"<49>":  # ctrl+1
         direction_map_index = 0
         print("Switching to P" + str(direction_map_index+1) + " side")
+        reset()
     if str(key) == r"<50>":  # ctrl+2
         direction_map_index = 1
         reset()
         print("Switching to P" + str(direction_map_index+1) + " side")
-        reset()
     if str(key) == r"<96>":
         run_scenario()
         print("Sequence complete")
+    if str(key) == "'*'":
+        press('BtnStart', 1)
+        clock.reset()
+        clock.sleep()
+        release('BtnStart')
+        print("Pressed start")
 
-
-def reset():
-    global symbols_map
-    global macros_map
-    global repetitions
+def load_recordings():
     global sequences
     global weights
-    global resets
-    resets += 1
-    f = open('config.json', 'r')
-    config = json.load(f)
-    symbols_map = direction_maps[direction_map_index]
-    symbols_map.update(config["Symbols"])
-    macros_map = config["Macros"]
-    repetitions = config["Repetitions"]
-    recordings_file = config["Recordings_file"]
-    f.close()
     sequences = [['']]
     weights = [[1]]
     f = open(recordings_file, 'r')
@@ -233,17 +227,62 @@ def reset():
         for j in range(len(sequences[i])):
             sequences[i][j] = string_to_frames(sequences[i][j])
     f.close()
+    print("loaded recordings from", recordings_file)
+
+
+def reset():
+    global symbols_map
+    global macros_map
+    global repetitions
+    global resets
+    global recordings_file
+    f = open('config.json', 'r')
+    config = json.load(f)
+    symbols_map = direction_maps[direction_map_index]
+    symbols_map.update(config["Symbols"])
+    macros_map = config["Macros"]
+    repetitions = config["Repetitions"]
+    if resets == 0:
+        recordings_file = config["Recordings_file"]
+    f.close()
+    load_recordings()
+    resets += 1
     print('Eddie is ready ('+str(resets)+')')
+
+
+# GUI stuff
+class GUI(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.resize(400, 400)
+        self.setAcceptDrops(True)
+        self.setWindowTitle('EddieBot')
+        mainLayout = QVBoxLayout()
+
+        self.setLayout(mainLayout)
+
+    def dragEnterEvent(self, event):
+        event.accept()
+
+    def dragMoveEvent(self, event):
+        event.accept()
+
+    def dropEvent(self, event):
+        global recordings_file
+        if event.mimeData().hasText:
+            event.setDropAction(Qt.CopyAction)
+            file_path = event.mimeData().urls()[0].toLocalFile()
+            recordings_file = file_path
+            load_recordings()
+            event.accept()
+        else:
+            event.ignore()
 
 
 if __name__ == "__main__":
     reset()
     app = QApplication(sys.argv)
-
-    w = QWidget()
-    w.resize(250, 150)
-    w.move(300, 300)
-    w.setWindowTitle('EddieBot')
+    w = GUI()
     w.show()
     with Listener(on_press=on_press) as listener:
         sys.exit(app.exec_())
