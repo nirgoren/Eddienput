@@ -45,6 +45,7 @@ P2_directions_map = {"2": { "Dpad": 2 },
 direction_maps = [P1_directions_map, P2_directions_map]
 direction_map_index = 0
 
+config_file = 'config.json'
 recordings_file = None
 symbols_map = direction_maps[direction_map_index%len(direction_maps)]
 macros_map = {}
@@ -162,7 +163,8 @@ def run_scenario():
 
 def on_press(key):
     global direction_map_index
-    #print("received", str(key))
+    global repetitions
+    print("received", str(key))
     if str(key) == r"'\x12'":  # ctrl+r
         print("Reloading script")
         reset()
@@ -174,15 +176,22 @@ def on_press(key):
         direction_map_index = 1
         reset()
         print("Switching to P" + str(direction_map_index+1) + " side")
-    if str(key) == r"<96>":
+    if str(key) == r"<189>":  # minus
+        repetitions = max(1, repetitions-1)
+        print("Number of repetitions set to", repetitions)
+    if str(key) == r"<187>":  # plus
+        repetitions = min(20, repetitions+1)
+        print("Number of repetitions set to", repetitions)
+    if str(key) == r"<96>" or str(key) == r"'\x10'":  # numpad0 or ctrl+p
         run_scenario()
         print("Sequence complete")
-    if str(key) == "'*'":
+    if str(key) == "Key.home":
         press('BtnStart', 1)
         clock.reset()
         clock.sleep()
         release('BtnStart')
         print("Pressed start")
+
 
 def load_recordings():
     global sequences
@@ -251,6 +260,18 @@ def reset():
 
 
 # GUI stuff
+class ImageLabel(QLabel):
+    def __init__(self):
+        super().__init__()
+
+        self.setAlignment(Qt.AlignCenter)
+        self.setText('\n\n Drop a Config or Recording File Here \n\n')
+        self.setStyleSheet('''
+            QLabel{
+                border: 4px dashed #aaa
+            }
+        ''')
+
 class GUI(QWidget):
     def __init__(self):
         super().__init__()
@@ -259,6 +280,8 @@ class GUI(QWidget):
         self.setWindowTitle('EddieBot')
         mainLayout = QVBoxLayout()
 
+        self.photoViewer = ImageLabel()
+        mainLayout.addWidget(self.photoViewer)
         self.setLayout(mainLayout)
 
     def dragEnterEvent(self, event):
@@ -269,11 +292,16 @@ class GUI(QWidget):
 
     def dropEvent(self, event):
         global recordings_file
+        global config_file
         if event.mimeData().hasText:
             event.setDropAction(Qt.CopyAction)
-            file_path = event.mimeData().urls()[0].toLocalFile()
-            recordings_file = file_path
-            load_recordings()
+            file_path: str = event.mimeData().urls()[0].toLocalFile()
+            if file_path.endswith('.json'):
+                config_file = file_path
+                reset()
+            else:
+                recordings_file = file_path
+                load_recordings()
             event.accept()
         else:
             event.ignore()
