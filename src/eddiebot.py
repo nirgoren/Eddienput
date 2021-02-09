@@ -54,6 +54,8 @@ virtual_controller = pyxinput.vController()
 sequences = [[]]
 weights = [[]]
 
+
+# parse a string into a series of frame commands
 def string_to_frames(s: str):
     moves = []
     if s == '':
@@ -97,19 +99,14 @@ def string_to_frames(s: str):
 
 
 def press(button, value):
-    #t0 = time.perf_counter()
     virtual_controller.set_value(button, value)
-    #print(time.perf_counter() - t0)
-    #print("pressed:", button, "value:", value)
 
 
 def release(button):
-    #t0 = time.perf_counter()
     virtual_controller.set_value(button, 0)
-    #print(time.perf_counter() - t0)
-    #print("released:", button)
 
 
+# press/release the inputs for the given frame
 def run_frame(frame):
     frame_press_buttons = [x[0] for x in frame if x[1] != 'release']
     frame_press_buttons = [x if isinstance(x, str) else 'Dpad' for x in frame_press_buttons]
@@ -164,7 +161,7 @@ def run_scenario():
 def on_press(key):
     global direction_map_index
     global repetitions
-    print("received", str(key))
+    # print("received", str(key))
     if str(key) == r"'\x12'":  # ctrl+r
         print("Reloading script")
         reset()
@@ -245,13 +242,13 @@ def reset():
     global repetitions
     global resets
     global recordings_file
-    f = open('config.json', 'r')
+    f = open(config_file, 'r')
     config = json.load(f)
     symbols_map = direction_maps[direction_map_index]
     symbols_map.update(config["Symbols"])
     macros_map = config["Macros"]
-    repetitions = config["Repetitions"]
     if resets == 0:
+        repetitions = config["Repetitions"]
         recordings_file = config["Recordings_file"]
     f.close()
     load_recordings()
@@ -299,9 +296,11 @@ class GUI(QWidget):
             if file_path.endswith('.json'):
                 config_file = file_path
                 reset()
-            else:
+            elif file_path.endswith('.txt'):
                 recordings_file = file_path
                 load_recordings()
+            else:
+                print("Invalid suffix (valid options are .json for a config file and .txt for recordings file")
             event.accept()
         else:
             event.ignore()
