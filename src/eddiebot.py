@@ -6,6 +6,7 @@ import json
 import pyxinput  # requires installation: https://github.com/shauleiz/vXboxInterface/releases
 from PyQt5.QtWidgets import QApplication, QWidget
 import sys
+import re
 
 WAIT_CONST = 'W'
 NEXT_CONST = 'next'
@@ -47,6 +48,7 @@ macros_map = {}
 repetitions = REPETITIONS_DEFAULT
 MyVirtual = pyxinput.vController()
 sequences = [[]]
+weights = [[]]
 
 
 def string_to_frames(s: str):
@@ -140,11 +142,20 @@ def perform_actions(actions):
 
 def run_scenario():
     for _ in range(repetitions):
-        for recordings in sequences:
+        for i, recordings in enumerate(sequences):
             if len(recordings) != 0:
-                r = random.randint(0, len(recordings) - 1)
+                # choose a random option with probability proportional to the weight of each option
+                s = sum(weights[i])
+                r = random.random()*s
+                accumulated = 0
+                c = 0
+                for j in range(len(recordings)):
+                    accumulated += weights[i][j]
+                    if r < accumulated:
+                        c = j
+                        break
                 clock.reset()
-                perform_actions(recordings[r])
+                perform_actions(recordings[c])
 
 
 def on_press(key):
@@ -169,6 +180,7 @@ def reset():
     global macros_map
     global repetitions
     global sequences
+    global weights
     global resets
     resets += 1
     f = open('config.json', 'r')
@@ -180,6 +192,7 @@ def reset():
     recordings_file = config["Recordings_file"]
     f.close()
     sequences = [['']]
+    weights = [[1]]
     f = open(recordings_file, 'r')
     i = 0
     j = 0
@@ -190,18 +203,27 @@ def reset():
         # ignore comment lines
         elif line.startswith(COMMENT_SYMBOL):
             pass
-        elif line.startswith(MIX_START) or line.startswith(MIX_END):
+        elif line.startswith(MIX_START):
             i += 1
             j = -1
             sequences.append([''])
+            weights.append([])
         elif line.startswith(OPTION):
+            # get option weight (default is 1)
+            weight = re.findall(r'\d+', line)
+            if weight:
+                weight = int(weight[0])
+            else:
+                weight = 1
             j += 1
+            weights[i].append(weight)
             if j > 0:
                 sequences[i].append('')
         elif line.startswith(MIX_END):
             i += 1
             j = 0
             sequences.append([''])
+            weights.append([1])
         else:
             sequences[i][j] = sequences[i][j]+line
 
