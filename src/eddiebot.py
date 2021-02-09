@@ -30,10 +30,10 @@ def string_to_frames(s: str):
             res.append(frame)
         else:
             if len(frame) == 1:
-                res.append('W')
+                res.append(WAIT_CONST)
             else:
                 # support for Wn with n being a natural number
-                res.extend(['W' for i in range(int(frame[1:]))])
+                res.extend([WAIT_CONST for i in range(int(frame[1:]))])
     s = ' '.join(res)
     for macro in macros_map:
         s = s.replace(macro, macros_map[macro])
@@ -42,7 +42,7 @@ def string_to_frames(s: str):
         frame_moves = []
         frame = frame.split('+')
         for button in frame:
-            if button.startswith('W'):
+            if button.startswith(WAIT_CONST):
                 pass
             else:
                 command = 'tap'
@@ -95,10 +95,11 @@ def run_frame(frame):
             value = button['Dpad']
             button = 'Dpad'
         if command == 'tap':
-            to_release.update({button})
             press(button, value)
+            to_release.update({button})
         elif command == 'press':
             press(button, value)
+            to_release.discard(button)
         elif command == 'release':
             release(button)
     wait()
@@ -156,8 +157,8 @@ def main():
     f.close()
     print("Eddie is ready")
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     main()
     with Listener(on_press=on_press) as listener:
         listener.join()
