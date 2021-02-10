@@ -55,6 +55,16 @@ sequences = [[]]
 weights = [[]]
 
 
+def press(button, value):
+    virtual_controller.set_value(button, value)
+    #print("pressed:", button, value, time.perf_counter()*60)
+
+
+def release(button):
+    virtual_controller.set_value(button, 0)
+    #print("released:", button, time.perf_counter()*60)
+
+
 # parse a string into a series of frame commands
 def string_to_frames(s: str):
     moves = []
@@ -98,16 +108,10 @@ def string_to_frames(s: str):
     return moves
 
 
-def press(button, value):
-    virtual_controller.set_value(button, value)
-
-
-def release(button):
-    virtual_controller.set_value(button, 0)
-
-
 # press/release the inputs for the given frame
 def run_frame(frame):
+    # wait for the next frame
+    clock.sleep()
     frame_press_buttons = [x[0] for x in frame if x[1] != 'release']
     frame_press_buttons = [x if isinstance(x, str) else 'Dpad' for x in frame_press_buttons]
     released = set()
@@ -131,16 +135,16 @@ def run_frame(frame):
             to_release.discard(button)
         elif command == 'release':
             release(button)
-    # wait for the next frame
-    clock.sleep()
 
-
-def perform_actions(actions):
-    for frame in actions:
+def play_recording(recordings):
+    for frame in recordings:
         run_frame(frame)
 
 
 def run_scenario():
+    # for option in sequences:
+    #     print(option)
+    clock.reset()
     for _ in range(repetitions):
         for i, recordings in enumerate(sequences):
             if len(recordings) != 0:
@@ -148,15 +152,83 @@ def run_scenario():
                 s = sum(weights[i])
                 r = random.random()*s
                 accumulated = 0
-                c = 0
+                c = None
                 for j in range(len(recordings)):
                     accumulated += weights[i][j]
                     if r < accumulated:
                         c = j
                         break
-                clock.reset()
-                perform_actions(recordings[c])
+                play_recording(recordings[c])
 
+
+def load_recordings():
+    global sequences
+    global weights
+    # sequences[i][j] is the j'th option of the i'th part of the whole sequences
+    sequences = []
+    weights = []
+    f = open(recordings_file, 'r')
+    i = 0
+    j = 0
+    for line in f:
+        # ignore empty lines
+        if len(line) == 0 or line.startswith('\n'):
+            pass
+        # ignore comment lines
+        elif line.startswith(COMMENT_SYMBOL):
+            pass
+        elif line.startswith(MIX_START):
+            if i < len(sequences):
+                i += 1
+            j = -1
+            sequences.append([])
+            weights.append([])
+        elif line.startswith(OPTION):
+            # get option weight (default is 1)
+            weight = re.findall(r'\d+', line)
+            if weight:
+                weight = int(weight[0])
+            else:
+                weight = 1
+            weights[i].append(weight)
+            sequences[i].append('')
+            j += 1
+        elif line.startswith(MIX_END):
+            i += 1
+            j = 0
+        else:
+            if len(sequences) == i:
+                sequences.append([''])
+                weights.append([1])
+            # append to current recording
+            sequences[i][j] = sequences[i][j]+line
+
+    for i in range(len(sequences)):
+        for j in range(len(sequences[i])):
+            sequences[i][j] = string_to_frames(sequences[i][j])
+    f.close()
+    print("loaded recordings from", recordings_file)
+
+
+def reset():
+    global symbols_map
+    global macros_map
+    global repetitions
+    global resets
+    global recordings_file
+    f = open(config_file, 'r')
+    config = json.load(f)
+    symbols_map = direction_maps[direction_map_index]
+    symbols_map.update(config["Symbols"])
+    macros_map = config["Macros"]
+    if resets == 0:
+        repetitions = config["Repetitions"]
+        recordings_file = config["Recordings_file"]
+    f.close()
+    print("Loaded config from", config_file)
+    load_recordings()
+    resets += 1
+    print('Eddie is ready ('+str(resets)+')')
 
 def on_press(key):
     global direction_map_index
@@ -182,79 +254,12 @@ def on_press(key):
     if str(key) == r"<96>" or str(key) == r"'\x10'":  # numpad0 or ctrl+p
         run_scenario()
         print("Sequence complete")
-    if str(key) == "Key.home":
+    if str(key) == "Key.home":  # home
         press('BtnStart', 1)
         clock.reset()
         clock.sleep()
         release('BtnStart')
         print("Pressed start")
-
-
-def load_recordings():
-    global sequences
-    global weights
-    sequences = [['']]
-    weights = [[1]]
-    f = open(recordings_file, 'r')
-    i = 0
-    j = 0
-    for line in f:
-        # ignore empty lines
-        if len(line) == 0 or line.startswith('\n'):
-            pass
-        # ignore comment lines
-        elif line.startswith(COMMENT_SYMBOL):
-            pass
-        elif line.startswith(MIX_START):
-            i += 1
-            j = -1
-            sequences.append([''])
-            weights.append([])
-        elif line.startswith(OPTION):
-            # get option weight (default is 1)
-            weight = re.findall(r'\d+', line)
-            if weight:
-                weight = int(weight[0])
-            else:
-                weight = 1
-            j += 1
-            weights[i].append(weight)
-            if j > 0:
-                sequences[i].append('')
-        elif line.startswith(MIX_END):
-            i += 1
-            j = 0
-            sequences.append([''])
-            weights.append([1])
-        else:
-            sequences[i][j] = sequences[i][j]+line
-
-    for i in range(len(sequences)):
-        for j in range(len(sequences[i])):
-            sequences[i][j] = string_to_frames(sequences[i][j])
-    f.close()
-    print("loaded recordings from", recordings_file)
-
-
-def reset():
-    global symbols_map
-    global macros_map
-    global repetitions
-    global resets
-    global recordings_file
-    f = open(config_file, 'r')
-    config = json.load(f)
-    symbols_map = direction_maps[direction_map_index]
-    symbols_map.update(config["Symbols"])
-    macros_map = config["Macros"]
-    if resets == 0:
-        repetitions = config["Repetitions"]
-        recordings_file = config["Recordings_file"]
-    f.close()
-    load_recordings()
-    resets += 1
-    print('Eddie is ready ('+str(resets)+')')
-
 
 # GUI stuff
 class ImageLabel(QLabel):
