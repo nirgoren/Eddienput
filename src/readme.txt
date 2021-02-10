@@ -26,4 +26,8 @@ X - tap X and release the next frame
 
 Hotkeys:
 Reload script - ctrl+r
-Play sequence - numkey0
+P1 side - ctrl+1
+P2 side - ctrl+2
+Increase number of repetitions - (ctrl+"=")
+Decrease number of repetitions - (ctrl+"-")
+Play sequence - numkey0 or ctrl+p

@@ -53,16 +53,25 @@ repetitions = REPETITIONS_DEFAULT
 virtual_controller = pyxinput.vController()
 sequences = [[]]
 weights = [[]]
+buttons_queue = []
+log_queue = []
 
 
-def press(button, value):
+def set_button_value(button, value):
+    log_queue.append((button, value, time.perf_counter()*60))
     virtual_controller.set_value(button, value)
     #print("pressed:", button, value, time.perf_counter()*60)
 
 
-def release(button):
-    virtual_controller.set_value(button, 0)
-    #print("released:", button, time.perf_counter()*60)
+def play_queue():
+    global log_queue
+    log_queue = []
+    for frame in buttons_queue:
+        clock.sleep()
+        for button, val in frame:
+            set_button_value(button, val)
+    # for button, val, t in log_queue:
+    #     print("pressed:", button, val, t)
 
 
 # parse a string into a series of frame commands
@@ -109,16 +118,17 @@ def string_to_frames(s: str):
 
 
 # press/release the inputs for the given frame
-def run_frame(frame):
+def process_frame(frame):
+    global buttons_queue
+    frame_queue = []
     # wait for the next frame
-    clock.sleep()
     frame_press_buttons = [x[0] for x in frame if x[1] != 'release']
     frame_press_buttons = [x if isinstance(x, str) else 'Dpad' for x in frame_press_buttons]
     released = set()
 
     for button in to_release:
         if button not in frame_press_buttons:
-            release(button)
+            frame_queue.append((button, 0))
             released.update({button})
     for button in released:
         to_release.discard(button)
@@ -128,23 +138,26 @@ def run_frame(frame):
             value = button['Dpad']
             button = 'Dpad'
         if command == 'tap':
-            press(button, value)
+            frame_queue.append((button, value))
             to_release.update({button})
         elif command == 'press':
-            press(button, value)
+            frame_queue.append((button, value))
             to_release.discard(button)
         elif command == 'release':
-            release(button)
+            frame_queue.append((button, 0))
+    buttons_queue.append(frame_queue)
 
-def play_recording(recordings):
+
+def process_recording(recordings):
     for frame in recordings:
-        run_frame(frame)
+        process_frame(frame)
 
 
 def run_scenario():
     # for option in sequences:
     #     print(option)
-    clock.reset()
+    global buttons_queue
+    buttons_queue = []
     for _ in range(repetitions):
         for i, recordings in enumerate(sequences):
             if len(recordings) != 0:
@@ -158,8 +171,9 @@ def run_scenario():
                     if r < accumulated:
                         c = j
                         break
-                play_recording(recordings[c])
-
+                process_recording(recordings[c])
+    clock.reset()
+    play_queue()
 
 def load_recordings():
     global sequences
@@ -255,7 +269,7 @@ def on_press(key):
         run_scenario()
         print("Sequence complete")
     if str(key) == "Key.home":  # home
-        press('BtnStart', 1)
+        set_button_value('BtnStart', 1)
         clock.reset()
         clock.sleep()
         release('BtnStart')

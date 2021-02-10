@@ -15,4 +15,4 @@ class Clock:
         # self.next = perf_counter() + self.frame_length
 
     def reset(self):
-        self.next = int(perf_counter() + self.frame_length) + 1
+        self.next = perf_counter() + self.frame_length
