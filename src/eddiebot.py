@@ -79,10 +79,7 @@ def string_to_frames(s: str):
     moves = []
     if s == '':
         s = 'W'
-    if s.endswith('\n'):
-        s = s[:-1]
-    s = s.replace('\n', ' ')
-    frames = s.split(' ')
+    frames = s.split()
     res = []
     for frame in frames:
         if not frame.startswith(WAIT_CONST):
@@ -185,8 +182,9 @@ def load_recordings():
     i = 0
     j = 0
     for line in f:
+        line = line.strip()
         # ignore empty lines
-        if len(line) == 0 or line.startswith('\n'):
+        if len(line) == 0:
             pass
         # ignore comment lines
         elif line.startswith(COMMENT_SYMBOL):
@@ -215,7 +213,7 @@ def load_recordings():
                 sequences.append([''])
                 weights.append([1])
             # append to current recording
-            sequences[i][j] = sequences[i][j]+line
+            sequences[i][j] = sequences[i][j] + ' ' + line
 
     for i in range(len(sequences)):
         for j in range(len(sequences[i])):
@@ -272,7 +270,7 @@ def on_press(key):
         set_button_value('BtnStart', 1)
         clock.reset()
         clock.sleep()
-        release('BtnStart')
+        set_button_value('BtnStart', 0)
         print("Pressed start")
 
 # GUI stuff
@@ -323,7 +321,6 @@ class GUI(QWidget):
             event.accept()
         else:
             event.ignore()
-
 
 if __name__ == "__main__":
     reset()
