@@ -6,10 +6,13 @@ import time
 import random
 import json
 import vcontroller
+from playsound import playsound
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel
 import sys
 import re
 
+START_PLAYING_SOUND = 'zapsplat_technology_electronic_device_high_pitched_beep_tone_003_54697.mp3'
+END_PLAYING_SOUND = 'zapsplat_technology_electronic_device_high_pitched_beep_tone_004_54698.mp3'
 WAIT_CONST = 'W'
 NEXT_CONST = 'next'
 COMMENT_SYMBOL = '#'
@@ -22,24 +25,24 @@ REPETITIONS_DEFAULT = 1
 resets = 0
 clock = Clock(FPS)
 to_release = set()
-P1_directions_map = {"2": { "Dpad": 2 },
-                  "4": { "Dpad": 4 },
-                  "6": { "Dpad": 8 },
-                  "8": { "Dpad": 1 },
-                  "1": { "Dpad": 6 },
-                  "3": { "Dpad": 10 },
-                  "7": { "Dpad": 5 },
-                  "9": { "Dpad": 9 }
+P1_directions_map = {"2": { "Dpad": 0x2 },
+                  "4": { "Dpad": 0x4 },
+                  "6": { "Dpad": 0x8 },
+                  "8": { "Dpad": 0x1 },
+                  "1": { "Dpad": 0x6 },
+                  "3": { "Dpad": 0xA },
+                  "7": { "Dpad": 0X5 },
+                  "9": { "Dpad": 0X9 }
                  }
 
-P2_directions_map = {"2": { "Dpad": 2 },
-                  "4": { "Dpad": 8 },
-                  "6": { "Dpad": 4 },
-                  "8": { "Dpad": 1 },
-                  "1": { "Dpad": 10 },
-                  "3": { "Dpad": 6 },
-                  "7": { "Dpad": 9 },
-                  "9": { "Dpad": 5 }
+P2_directions_map = {"2": { "Dpad": 0x2 },
+                  "4": { "Dpad": 0x8 },
+                  "6": { "Dpad": 0x4 },
+                  "8": { "Dpad": 0x1 },
+                  "1": { "Dpad": 0xA },
+                  "3": { "Dpad": 0x6 },
+                  "7": { "Dpad": 0x9 },
+                  "9": { "Dpad": 0x5 }
                  }
 
 direction_maps = [P1_directions_map, P2_directions_map]
@@ -171,7 +174,9 @@ def run_scenario():
                         break
                 process_recording(recordings[c])
     clock.reset()
+    playsound(START_PLAYING_SOUND)
     play_queue()
+    playsound(END_PLAYING_SOUND)
 
 def load_recordings():
     global sequences
@@ -274,23 +279,35 @@ def on_press(key):
         set_button_value('BtnStart', 0)
         print("Pressed start")
 
+
 # GUI stuff
+HOTKEYS_TEXT =\
+    '''Hotkeys:
+    Reload script - ctrl+r
+    P1 side - ctrl+1
+    P2 side - ctrl+2
+    Increase number of repetitions - (ctrl+"=")
+    Decrease number of repetitions - (ctrl+"-")
+    Play sequence - numkey0 or ctrl+p'''
+
 class ImageLabel(QLabel):
     def __init__(self):
         super().__init__()
 
         self.setAlignment(Qt.AlignCenter)
-        self.setText('\n\n Drop a Config or Recording File Here \n\n')
+        self.setText('\n\n Drop a Config or Recording File Here \n\n' + HOTKEYS_TEXT)
         self.setStyleSheet('''
             QLabel{
                 border: 4px dashed #aaa
             }
         ''')
 
+
 class GUI(QWidget):
+
     def __init__(self):
         super().__init__()
-        self.resize(400, 400)
+        self.resize(500, 500)
         self.setAcceptDrops(True)
         self.setWindowTitle('EddieBot')
         mainLayout = QVBoxLayout()
