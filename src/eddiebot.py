@@ -5,7 +5,7 @@ from clock import Clock
 import time
 import random
 import json
-import pyxinput  # requires installation: https://github.com/shauleiz/vXboxInterface/releases
+import vcontroller
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel
 import sys
 import re
@@ -50,8 +50,8 @@ recordings_file = None
 symbols_map = direction_maps[direction_map_index%len(direction_maps)]
 macros_map = {}
 repetitions = REPETITIONS_DEFAULT
-virtual_controller = pyxinput.vController()
-sequences = [[]]
+controller_state = vcontroller.State()
+vcontroller.connect()
 weights = [[]]
 buttons_queue = []
 log_queue = []
@@ -59,7 +59,7 @@ log_queue = []
 
 def set_button_value(button, value):
     log_queue.append((button, value, time.perf_counter()*60))
-    virtual_controller.set_value(button, value)
+    controller_state.update_state(button, value)
     #print("pressed:", button, value, time.perf_counter()*60)
 
 
@@ -70,6 +70,7 @@ def play_queue():
         clock.sleep()
         for button, val in frame:
             set_button_value(button, val)
+        vcontroller.set_state(controller_state)
     # for button, val, t in log_queue:
     #     print("pressed:", button, val, t)
 
