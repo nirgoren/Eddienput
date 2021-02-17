@@ -1,6 +1,7 @@
 {
   "Repetitions": 1,
   "Recordings_file": "recordings.txt",
+
   "Symbols": {
     "P": "BtnX",
     "K": "BtnA",
@@ -11,6 +12,29 @@
     "select": "BtnBack",
     "start": "BtnStart"
   },
+
+  "P1_directions": {
+    "2": { "Dpad": 2 },
+    "4": { "Dpad": 4 },
+    "6": { "Dpad": 8 },
+    "8": { "Dpad": 1 },
+    "1": { "Dpad": 6 },
+    "3": { "Dpad": 10 },
+    "7": { "Dpad": 5 },
+    "9": { "Dpad": 9 }
+  },
+
+  "P2_directions": {
+    "2": { "Dpad": 2 },
+    "4": { "Dpad": 8 },
+    "6": { "Dpad": 4 },
+    "8": { "Dpad": 1 },
+    "1": { "Dpad": 10 },
+    "3": { "Dpad": 6 },
+    "7": { "Dpad": 9 },
+    "9": { "Dpad": 5 }
+  },
+
   "Macros": {
     "5": "]1[",
     "QCF": "2 3 6",

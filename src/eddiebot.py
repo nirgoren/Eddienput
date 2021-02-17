@@ -11,8 +11,8 @@ from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel
 import sys
 import re
 
-START_PLAYING_SOUND = 'zapsplat_technology_electronic_device_high_pitched_beep_tone_003_54697.mp3'
-END_PLAYING_SOUND = 'zapsplat_technology_electronic_device_high_pitched_beep_tone_004_54698.mp3'
+START_PLAYING_SOUND = 'boop.mp3'
+END_PLAYING_SOUND = 'boop_low.mp3'
 WAIT_CONST = 'W'
 NEXT_CONST = 'next'
 COMMENT_SYMBOL = '#'
@@ -25,26 +25,9 @@ REPETITIONS_DEFAULT = 1
 resets = 0
 clock = Clock(FPS)
 to_release = set()
-P1_directions_map = {"2": { "Dpad": 0x2 },
-                  "4": { "Dpad": 0x4 },
-                  "6": { "Dpad": 0x8 },
-                  "8": { "Dpad": 0x1 },
-                  "1": { "Dpad": 0x6 },
-                  "3": { "Dpad": 0xA },
-                  "7": { "Dpad": 0X5 },
-                  "9": { "Dpad": 0X9 }
-                 }
 
-P2_directions_map = {"2": { "Dpad": 0x2 },
-                  "4": { "Dpad": 0x8 },
-                  "6": { "Dpad": 0x4 },
-                  "8": { "Dpad": 0x1 },
-                  "1": { "Dpad": 0xA },
-                  "3": { "Dpad": 0x6 },
-                  "7": { "Dpad": 0x9 },
-                  "9": { "Dpad": 0x5 }
-                 }
-
+P1_directions_map = {}
+P2_directions_map = {}
 direction_maps = [P1_directions_map, P2_directions_map]
 direction_map_index = 0
 
@@ -178,6 +161,7 @@ def run_scenario():
     play_queue()
     playsound(END_PLAYING_SOUND)
 
+
 def load_recordings():
     global sequences
     global weights
@@ -230,12 +214,18 @@ def load_recordings():
 
 def reset():
     global symbols_map
+    global P1_directions_map
+    global P2_directions_map
+    global direction_maps
     global macros_map
     global repetitions
     global resets
     global recordings_file
     f = open(config_file, 'r')
     config = json.load(f)
+    P1_directions_map = config["P1_directions"]
+    P2_directions_map = config["P2_directions"]
+    direction_maps = [P1_directions_map, P2_directions_map]
     symbols_map = direction_maps[direction_map_index]
     symbols_map.update(config["Symbols"])
     macros_map = config["Macros"]
@@ -247,6 +237,7 @@ def reset():
     load_recordings()
     resets += 1
     print('Eddie is ready ('+str(resets)+')')
+
 
 def on_press(key):
     global direction_map_index
@@ -272,12 +263,12 @@ def on_press(key):
     if str(key) == r"<96>" or str(key) == r"'\x10'":  # numpad0 or ctrl+p
         run_scenario()
         print("Sequence complete")
-    if str(key) == "Key.home":  # home
-        set_button_value('BtnStart', 1)
-        clock.reset()
-        clock.sleep()
-        set_button_value('BtnStart', 0)
-        print("Pressed start")
+    # if str(key) == "Key.home":  # home
+    #     set_button_value('BtnStart', 1)
+    #     clock.reset()
+    #     clock.sleep()
+    #     set_button_value('BtnStart', 0)
+    #     print("Pressed start")
 
 
 # GUI stuff
@@ -289,6 +280,7 @@ HOTKEYS_TEXT =\
     Increase number of repetitions - (ctrl+"=")
     Decrease number of repetitions - (ctrl+"-")
     Play sequence - numkey0 or ctrl+p'''
+
 
 class ImageLabel(QLabel):
     def __init__(self):
@@ -340,11 +332,14 @@ class GUI(QWidget):
         else:
             event.ignore()
 
+
 if __name__ == "__main__":
     reset()
     app = QApplication(sys.argv)
     w = GUI()
     w.show()
     with Listener(on_press=on_press) as listener:
-        sys.exit(app.exec_())
-        #listener.join()
+        app.exec_()
+        listener.stop()
+        vcontroller.disconnect()
+        listener.join()
