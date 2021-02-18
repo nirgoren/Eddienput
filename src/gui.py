@@ -8,9 +8,6 @@ import traceback
 from worker import Worker
 import eddiebot
 
-# GUI stuff
-
-#https://www.learnpyqt.com/tutorials/multithreading-pyqt-applications-qthreadpool/
 
 HOTKEYS_TEXT =\
     '''Hotkeys:
@@ -19,6 +16,7 @@ HOTKEYS_TEXT =\
     P2 side - ctrl+2
     Increase number of repetitions - (ctrl+"=")
     Decrease number of repetitions - (ctrl+"-")
+    Press start on P2 controller - Home key
     Play sequence - numkey0 or ctrl+p
     Stop sequence - ctrl+x \n\n'''
 
@@ -51,22 +49,16 @@ def on_press(key):
     if str(key) == r"<96>" or str(key) == r"'\x10'":  # numpad0 or ctrl+p
         worker = Worker(eddiebot.run_scenario)
         eddiebot.threadpool.start(worker)
-
-        #eddiebot.run_scenario()
-    # if str(key) == "Key.home":  # home
-    #     set_button_value('BtnStart', 1)
-    #     clock.reset()
-    #     clock.sleep()
-    #     set_button_value('BtnStart', 0)
-    #     print("Pressed start")
+    if str(key) == "Key.home":  # home
+        eddiebot.tap_button('BtnStart')
+        print("Pressed start")
 
 
 class MyHandler(XInput.EventHandler):
     def process_button_event(self, event: XInput.Event):
-        # put here the code to parse every event related only to the buttons
         # if not eddiebot.playing:
         #     worker = Worker(eddiebot.run_scenario)
-        #     threadpool.start(worker)
+        #     eddiebot.threadpool.start(worker)
         pass
 
     def process_trigger_event(self, event):
@@ -112,6 +104,9 @@ class GUI(QWidget):
         event.accept()
 
     def dropEvent(self, event):
+        if eddiebot.playing:
+            print("Recording currently playing, can't change recording")
+            return
         if event.mimeData().hasText:
             event.setDropAction(Qt.CopyAction)
             file_path: str = event.mimeData().urls()[0].toLocalFile()

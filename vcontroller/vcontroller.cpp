@@ -75,7 +75,7 @@ extern "C" {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  __declspec(dllexport) int set_state(int value)
+  __declspec(dllexport) int set_state(int buttons_value, int LT_value, int RT_value)
   {
     //
     // The XINPUT_GAMEPAD structure is identical to the XUSB_REPORT structure
@@ -84,7 +84,9 @@ extern "C" {
     // Call this function on every input state change e.g. in a loop polling
     // another joystick or network device or thermometer or... you get the idea.
     //
-      state.wButtons = value;
+      state.wButtons = buttons_value;
+      state.bLeftTrigger = LT_value;
+      state.bRightTrigger = RT_value;
       vigem_target_x360_update(client, pad, *reinterpret_cast<XUSB_REPORT*>(&state));
       
     return 0;

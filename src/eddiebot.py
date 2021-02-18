@@ -9,8 +9,8 @@ from worker import Worker
 from playsound import playsound
 import re
 
-START_PLAYING_SOUND = 'boop.mp3'
-END_PLAYING_SOUND = 'boop_low.mp3'
+START_PLAYING_SOUND = 'boop.wav'
+END_PLAYING_SOUND = 'boop_low.wav'
 QUE_SOUND = 'beep.wav'
 WAIT_CONST = 'W'
 NEXT_CONST = 'next'
@@ -49,10 +49,24 @@ def play_sound_async(sound):
     worker = Worker(playsound, sound)
     threadpool.start(worker)
 
+
 def set_button_value(button, value):
     log_queue.append((button, value, time.perf_counter()*60))
     controller_state.update_state(button, value)
     #print("pressed:", button, value, time.perf_counter()*60)
+
+
+def release_all():
+    controller_state.reset()
+    vcontroller.set_state(controller_state)
+
+
+def tap_button(button):
+    set_button_value(button, 1)
+    vcontroller.set_state(controller_state)
+    clock.reset()
+    clock.sleep()
+    release_all()
 
 
 def play_queue():
@@ -70,8 +84,7 @@ def play_queue():
                     set_button_value(button, val)
             vcontroller.set_state(controller_state)
         else:
-            controller_state.state_value = 0  # release all buttons
-            vcontroller.set_state(controller_state)
+            release_all()
     playing = False
     return
     # for button, val, t in log_queue:

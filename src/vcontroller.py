@@ -19,16 +19,28 @@ buttons = {
 
 
 class State:
-    state_value = 0x0000
+    buttons_value = 0x0000
+    LT_value = 0x00
+    RT_value = 0x00
 
     def update_state(self, button, value):
-        base = buttons[button]
-        if base == 0x0001:  # Dpad case
-            mask = 0xfff0
+        if button == 'TriggerL':
+            self.LT_value = value * 0xff
+        elif button == 'TriggerR':
+            self.RT_value = value * 0xff
         else:
-            mask = 0xffff ^ base
-        rest = self.state_value & mask
-        self.state_value = rest + base * value
+            base = buttons[button]
+            if base == 0x0001:  # Dpad case
+                mask = 0xfff0
+            else:
+                mask = 0xffff ^ base
+            rest = self.buttons_value & mask
+            self.buttons_value = rest + base * value
+
+    def reset(self):
+        self.buttons_value = 0x0000
+        self.LT_value = 0x00
+        self.RT_value = 0x00
 
 
 def connect():
@@ -36,7 +48,7 @@ def connect():
 
 
 def set_state(state):
-    return _vcontroller.set_state(state.state_value)
+    return _vcontroller.set_state(state.buttons_value, state.LT_value, state.RT_value)
 
 
 def disconnect():
