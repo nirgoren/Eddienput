@@ -80,7 +80,7 @@ def string_to_frames(s: str):
     s = ' '.join(res)
     for macro in macros_map:
         s = s.replace(macro, macros_map[macro])
-    frames = s.split(' ')
+    frames = s.split()
     for frame in frames:
         frame_moves = []
         frame = frame.split('+')
@@ -156,13 +156,72 @@ def run_scenario():
                         c = j
                         break
                 process_recording(recordings[c])
-    clock.reset()
+    print("Playing sequence")
     playsound(START_PLAYING_SOUND)
+    clock.reset()
     play_queue()
     playsound(END_PLAYING_SOUND)
+    print("Sequence complete")
+
+
+# Returns true iff the recordings file is valid
+def parse_recordings() -> bool:
+    with open(recordings_file, 'r') as f:
+        mix_mode = False
+        for i, line in enumerate(f):
+            line = line.strip()
+            # ignore empty lines
+            if len(line) == 0:
+                pass
+            # ignore comment lines
+            elif line.startswith(COMMENT_SYMBOL):
+                pass
+            elif line == 'startmix':
+                if not mix_mode:
+                    mix_mode = True
+                else:
+                    print('Line', i+1, ': Entering mix mode while in mix mode')
+                    return False
+            elif line.startswith('option'):
+                if not mix_mode:
+                    print('Line', i+1, ': Defining an option while not in mix mode')
+                    return False
+                temp = line.split()
+                if len(temp) > 2:
+                    print('Line', i+1, ': Invalid option line')
+                    return False
+                elif len(temp) > 1:
+                    if not temp[1].isnumeric():
+                        print('Line', i + 1, ': Invalid option line, option weight must be an integer')
+                        return False
+            elif line == 'endmix':
+                if mix_mode:
+                    mix_mode = False
+                else:
+                    print('Line', i + 1, ': Exiting mix mode while in not in mix mode')
+                    return False
+            else:
+                frames = line.split()
+                for frame in frames:
+                    commands = frame.split('+')
+                    for command in commands:
+                        if command.startswith('[') or command.startswith(']'):
+                            command = command[1:-1]
+                        if command.startswith('W') and command[1:].isnumeric():
+                            pass
+                        elif command not in symbols_map and command not in direction_maps and command not in macros_map:
+                            print('Line', i + 1, ': Invalid symbol:', command)
+                            return False
+    if mix_mode:
+        print('Did not properly exit mix mode')
+        return False
+    return True
 
 
 def load_recordings():
+    if not parse_recordings():
+        print('Did not load recordings from', recordings_file)
+        return
     global sequences
     global weights
     # sequences[i][j] is the j'th option of the i'th part of the whole sequences
@@ -262,7 +321,6 @@ def on_press(key):
         print("Number of repetitions set to", repetitions)
     if str(key) == r"<96>" or str(key) == r"'\x10'":  # numpad0 or ctrl+p
         run_scenario()
-        print("Sequence complete")
     # if str(key) == "Key.home":  # home
     #     set_button_value('BtnStart', 1)
     #     clock.reset()
@@ -272,6 +330,9 @@ def on_press(key):
 
 
 # GUI stuff
+
+#https://www.learnpyqt.com/tutorials/multithreading-pyqt-applications-qthreadpool/
+
 HOTKEYS_TEXT =\
     '''Hotkeys:
     Reload script - ctrl+r

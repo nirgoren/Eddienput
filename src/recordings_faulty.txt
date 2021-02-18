@@ -1,0 +1,24 @@
+select W7
+#mawaru start
+*236 H W4 [K] W11 ]K[ W20
+startmix
+#6K
+option 80
+6 5 [6] W10 [K] W15 ]6[ *214 [S] [6] W29 ]K[ ]6[ ]S[ W20
+option 20
+#5K
+6 5 [6] W10 ]6[ W9 [K] W10 [S] [6] W24 ]K[ ]6[ ]S[ W20
+endmix
+startmix
+option 20
+6 5 [6] W10 [K] W15 ]6[ *214 [S] [6] W29 ]K[ ]6[ ]S[ W20
+option 80
+6 5 [6] W10 ]6[ W9 [K] W10 [S] [6] W24 ]K[ ]6[ ]S[ W20
+endmix
+startmix
+option 
+6 5 [6] W10 [K] W15 ]6[ *214 [S] [6] W29 ]K[ ]6[ ]S[ W20
+option 
+6 5 [6] W10 ]6[ W9 [K] W10 [S] [6] W24 ]K[ ]6[ ]S[ W20
+endmix
+W50
