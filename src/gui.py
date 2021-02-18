@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel
 from PyQt5.QtCore import Qt, QObject, pyqtSignal, QRunnable, pyqtSlot, QThreadPool
 from PyQt5.QtGui import QPixmap
 from pynput.keyboard import Listener
+import XInput
 import sys
 import traceback
 import eddiebot
@@ -20,7 +21,7 @@ HOTKEYS_TEXT =\
     Play sequence - numkey0 or ctrl+p \n\n'''
 
 threadpool = QThreadPool()
-
+XInput.get_connected()
 
 def on_press(key):
     #print("received", str(key))
@@ -57,6 +58,23 @@ def on_press(key):
     #     set_button_value('BtnStart', 0)
     #     print("Pressed start")
 
+
+class MyHandler(XInput.EventHandler):
+    def process_button_event(self, event: XInput.Event):
+        # put here the code to parse every event related only to the buttons
+        # if not eddiebot.playing:
+        #     worker = Worker(eddiebot.run_scenario)
+        #     threadpool.start(worker)
+        pass
+
+    def process_trigger_event(self, event):
+        pass
+
+    def process_stick_event(self, event):
+        pass
+
+    def process_connection_event(self, event):
+        pass
 
 class WorkerSignals(QObject):
     '''
@@ -174,6 +192,11 @@ class GUI(QWidget):
 
 
 if __name__ == "__main__":
+    if XInput.get_connected()[0]:
+        print('XInput controller detected')
+        my_handler: XInput.EventHandler = MyHandler(0)
+        my_handler.set_filter(XInput.BUTTON_RIGHT_SHOULDER + XInput.FILTER_PRESSED_ONLY)
+        my_gamepad_thread = XInput.GamepadThread(my_handler)
     eddiebot.vcontroller.connect()
     eddiebot.reset()
     app = QApplication(sys.argv)
