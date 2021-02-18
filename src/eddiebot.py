@@ -21,6 +21,7 @@ resets = 0
 clock = Clock(FPS)
 to_release = set()
 
+playing = False
 P1_directions_map = {}
 P2_directions_map = {}
 direction_maps = [P1_directions_map, P2_directions_map]
@@ -46,12 +47,19 @@ def set_button_value(button, value):
 
 def play_queue():
     global log_queue
+    global playing
     log_queue = []
     for frame in buttons_queue:
-        clock.sleep()
-        for button, val in frame:
-            set_button_value(button, val)
-        vcontroller.set_state(controller_state)
+        if playing:
+            clock.sleep()
+            for button, val in frame:
+                set_button_value(button, val)
+            vcontroller.set_state(controller_state)
+        else:
+            controller_state.state_value = 0  # release all buttons
+            vcontroller.set_state(controller_state)
+    playing = False
+    return
     # for button, val, t in log_queue:
     #     print("pressed:", button, val, t)
 
@@ -136,6 +144,8 @@ def run_scenario():
     # for option in sequences:
     #     print(option)
     global buttons_queue
+    global playing
+    playing = True
     buttons_queue = []
     for _ in range(repetitions):
         for i, recordings in enumerate(sequences):
