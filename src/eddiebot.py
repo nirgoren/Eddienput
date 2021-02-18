@@ -40,6 +40,7 @@ controller_state = vcontroller.State()
 vcontroller.connect()
 weights = [[]]
 buttons_queue = []
+sequences = []
 log_queue = []
 
 
@@ -340,7 +341,7 @@ HOTKEYS_TEXT =\
     P2 side - ctrl+2
     Increase number of repetitions - (ctrl+"=")
     Decrease number of repetitions - (ctrl+"-")
-    Play sequence - numkey0 or ctrl+p'''
+    Play sequence - numkey0 or ctrl+p \n\n'''
 
 
 class ImageLabel(QLabel):
