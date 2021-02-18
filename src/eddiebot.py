@@ -1,14 +1,9 @@
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap
-from pynput.keyboard import Key, Listener, Controller, KeyCode
 from clock import Clock
 import time
 import random
 import json
 import vcontroller
 from playsound import playsound
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel
-import sys
 import re
 
 START_PLAYING_SOUND = 'boop.mp3'
@@ -32,12 +27,11 @@ direction_maps = [P1_directions_map, P2_directions_map]
 direction_map_index = 0
 
 config_file = 'config.json'
-recordings_file = None
+recordings_file = ''
 symbols_map = direction_maps[direction_map_index%len(direction_maps)]
 macros_map = {}
 repetitions = REPETITIONS_DEFAULT
 controller_state = vcontroller.State()
-vcontroller.connect()
 weights = [[]]
 buttons_queue = []
 sequences = []
@@ -299,109 +293,4 @@ def reset():
     print('Eddie is ready ('+str(resets)+')')
 
 
-def on_press(key):
-    global direction_map_index
-    global repetitions
-    # print("received", str(key))
-    if str(key) == r"'\x12'":  # ctrl+r
-        print("Reloading script")
-        reset()
-    if str(key) == r"<49>":  # ctrl+1
-        direction_map_index = 0
-        print("Switching to P" + str(direction_map_index+1) + " side")
-        reset()
-    if str(key) == r"<50>":  # ctrl+2
-        direction_map_index = 1
-        reset()
-        print("Switching to P" + str(direction_map_index+1) + " side")
-    if str(key) == r"<189>":  # minus
-        repetitions = max(1, repetitions-1)
-        print("Number of repetitions set to", repetitions)
-    if str(key) == r"<187>":  # plus
-        repetitions = min(20, repetitions+1)
-        print("Number of repetitions set to", repetitions)
-    if str(key) == r"<96>" or str(key) == r"'\x10'":  # numpad0 or ctrl+p
-        run_scenario()
-    # if str(key) == "Key.home":  # home
-    #     set_button_value('BtnStart', 1)
-    #     clock.reset()
-    #     clock.sleep()
-    #     set_button_value('BtnStart', 0)
-    #     print("Pressed start")
 
-
-# GUI stuff
-
-#https://www.learnpyqt.com/tutorials/multithreading-pyqt-applications-qthreadpool/
-
-HOTKEYS_TEXT =\
-    '''Hotkeys:
-    Reload script - ctrl+r
-    P1 side - ctrl+1
-    P2 side - ctrl+2
-    Increase number of repetitions - (ctrl+"=")
-    Decrease number of repetitions - (ctrl+"-")
-    Play sequence - numkey0 or ctrl+p \n\n'''
-
-
-class ImageLabel(QLabel):
-    def __init__(self):
-        super().__init__()
-
-        self.setAlignment(Qt.AlignCenter)
-        self.setText('\n\n Drop a Config or Recording File Here \n\n' + HOTKEYS_TEXT)
-        self.setStyleSheet('''
-            QLabel{
-                border: 4px dashed #aaa
-            }
-        ''')
-
-
-class GUI(QWidget):
-
-    def __init__(self):
-        super().__init__()
-        self.resize(500, 500)
-        self.setAcceptDrops(True)
-        self.setWindowTitle('EddieBot')
-        mainLayout = QVBoxLayout()
-
-        self.photoViewer = ImageLabel()
-        mainLayout.addWidget(self.photoViewer)
-        self.setLayout(mainLayout)
-
-    def dragEnterEvent(self, event):
-        event.accept()
-
-    def dragMoveEvent(self, event):
-        event.accept()
-
-    def dropEvent(self, event):
-        global recordings_file
-        global config_file
-        if event.mimeData().hasText:
-            event.setDropAction(Qt.CopyAction)
-            file_path: str = event.mimeData().urls()[0].toLocalFile()
-            if file_path.endswith('.json'):
-                config_file = file_path
-                reset()
-            elif file_path.endswith('.txt'):
-                recordings_file = file_path
-                load_recordings()
-            else:
-                print("Invalid suffix (valid options are .json for a config file and .txt for recordings file")
-            event.accept()
-        else:
-            event.ignore()
-
-
-if __name__ == "__main__":
-    reset()
-    app = QApplication(sys.argv)
-    w = GUI()
-    w.show()
-    with Listener(on_press=on_press) as listener:
-        app.exec_()
-        listener.stop()
-        vcontroller.disconnect()
-        listener.join()
