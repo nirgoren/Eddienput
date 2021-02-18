@@ -1,13 +1,17 @@
+from PyQt5.QtCore import QThreadPool
+
 from clock import Clock
 import time
 import random
 import json
 import vcontroller
+from worker import Worker
 from playsound import playsound
 import re
 
 START_PLAYING_SOUND = 'boop.mp3'
 END_PLAYING_SOUND = 'boop_low.mp3'
+QUE_SOUND = 'beep.wav'
 WAIT_CONST = 'W'
 NEXT_CONST = 'next'
 COMMENT_SYMBOL = '#'
@@ -38,6 +42,12 @@ buttons_queue = []
 sequences = []
 log_queue = []
 
+threadpool = QThreadPool()
+
+
+def play_sound_async(sound):
+    worker = Worker(playsound, sound)
+    threadpool.start(worker)
 
 def set_button_value(button, value):
     log_queue.append((button, value, time.perf_counter()*60))
@@ -53,7 +63,11 @@ def play_queue():
         if playing:
             clock.sleep()
             for button, val in frame:
-                set_button_value(button, val)
+                if button == 'beep':
+                    if val == 1:
+                        play_sound_async(QUE_SOUND)
+                else:
+                    set_button_value(button, val)
             vcontroller.set_state(controller_state)
         else:
             controller_state.state_value = 0  # release all buttons
@@ -152,6 +166,8 @@ def run_scenario():
             if len(recordings) != 0:
                 # choose a random option with probability proportional to the weight of each option
                 s = sum(weights[i])
+                if s == 0:
+                    continue
                 r = random.random()*s
                 accumulated = 0
                 c = None
@@ -162,10 +178,10 @@ def run_scenario():
                         break
                 process_recording(recordings[c])
     print("Playing sequence")
-    playsound(START_PLAYING_SOUND)
     clock.reset()
+    play_sound_async(START_PLAYING_SOUND)
     play_queue()
-    playsound(END_PLAYING_SOUND)
+    play_sound_async(END_PLAYING_SOUND)
     print("Sequence complete")
 
 

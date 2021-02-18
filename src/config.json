@@ -10,7 +10,8 @@
     "D": "BtnShoulderR",
     "T": "TriggerR",
     "select": "BtnBack",
-    "start": "BtnStart"
+    "start": "BtnStart",
+    "beep": "beep"
   },
 
   "P1_directions": {
