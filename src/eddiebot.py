@@ -324,7 +324,7 @@ def load_config():
     try:
         f = open(config_file, 'r')
     except OSError:
-        print("Could not read file:", recordings_file)
+        print("Could not read file:", config_file)
         return False
     config = json.load(f)
     P1_directions_map = config["P1_directions"]
