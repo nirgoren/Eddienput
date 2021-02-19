@@ -91,11 +91,11 @@ class GUI(QWidget):
         self.resize(500, 500)
         self.setAcceptDrops(True)
         self.setWindowTitle('EddieBot')
-        mainLayout = QVBoxLayout()
+        main_layout = QVBoxLayout()
 
         self.photoViewer = ImageLabel()
-        mainLayout.addWidget(self.photoViewer)
-        self.setLayout(mainLayout)
+        main_layout.addWidget(self.photoViewer)
+        self.setLayout(main_layout)
 
     def dragEnterEvent(self, event):
         event.accept()
@@ -130,7 +130,7 @@ if __name__ == "__main__":
         my_handler.set_filter(XInput.BUTTON_RIGHT_SHOULDER + XInput.FILTER_PRESSED_ONLY)
         my_gamepad_thread = XInput.GamepadThread(my_handler)
     eddiebot.vcontroller.connect()
-    eddiebot.reset()
+    #eddiebot.reset()
     app = QApplication(sys.argv)
     w = GUI()
     w.show()

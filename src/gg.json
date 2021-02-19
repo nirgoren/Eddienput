@@ -1,8 +1,5 @@
 {
-  "Repetitions": 1,
-  "Recordings_file": "recordings.txt",
-
-  "Symbols": {
+    "Symbols": {
     "P": "BtnX",
     "K": "BtnA",
     "S": "BtnY",
@@ -51,6 +48,9 @@
     "*624": "6 3 2 1 4",
     "*6246": "6 3 2 1 4 6",
     "*236236": "2 3 6 2 3 6",
-    "*214214": "2 1 4 2 1 4"
+    "*214214": "2 1 4 2 1 4",
+    "SELECT": "select",
+    "START": "start",
+    "BEEP": "beep"
   }
 }

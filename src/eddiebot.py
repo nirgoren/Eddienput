@@ -31,7 +31,6 @@ P2_directions_map = {}
 direction_maps = [P1_directions_map, P2_directions_map]
 direction_map_index = 0
 
-config_file = 'config.json'
 recordings_file = ''
 symbols_map = direction_maps[direction_map_index%len(direction_maps)]
 macros_map = {}
@@ -203,6 +202,8 @@ def parse_recordings() -> bool:
     with open(recordings_file, 'r') as f:
         mix_mode = False
         for i, line in enumerate(f):
+            if i == 0:  # Skip first line (config file)
+                continue
             line = line.strip()
             # ignore empty lines
             if len(line) == 0:
@@ -253,18 +254,23 @@ def parse_recordings() -> bool:
 
 
 def load_recordings():
+    global sequences
+    global weights
+    if not load_config():
+        print('Did not load recordings from', recordings_file)
+        return
     if not parse_recordings():
         print('Did not load recordings from', recordings_file)
         return
-    global sequences
-    global weights
     # sequences[i][j] is the j'th option of the i'th part of the whole sequences
     sequences = []
     weights = []
     f = open(recordings_file, 'r')
     i = 0
     j = 0
-    for line in f:
+    for line_number, line in enumerate(f):
+        if line_number == 0:  # skip first line (config file)
+            continue
         line = line.strip()
         # ignore empty lines
         if len(line) == 0:
@@ -305,16 +311,21 @@ def load_recordings():
     print("loaded recordings from", recordings_file)
 
 
-def reset():
+def load_config():
     global symbols_map
     global P1_directions_map
     global P2_directions_map
     global direction_maps
     global macros_map
     global repetitions
-    global resets
     global recordings_file
-    f = open(config_file, 'r')
+    with open(recordings_file, 'r') as f:
+        config_file = f.readline().strip()
+    try:
+        f = open(config_file, 'r')
+    except OSError:
+        print("Could not read file:", recordings_file)
+        return False
     config = json.load(f)
     P1_directions_map = config["P1_directions"]
     P2_directions_map = config["P2_directions"]
@@ -322,11 +333,12 @@ def reset():
     symbols_map = direction_maps[direction_map_index]
     symbols_map.update(config["Symbols"])
     macros_map = config["Macros"]
-    if resets == 0:
-        repetitions = config["Repetitions"]
-        recordings_file = config["Recordings_file"]
-    f.close()
     print("Loaded config from", config_file)
+    return True
+
+
+def reset():
+    global resets
     load_recordings()
     resets += 1
     print('Eddie is ready ('+str(resets)+')')
