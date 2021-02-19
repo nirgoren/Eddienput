@@ -76,7 +76,7 @@ class ImageLabel(QLabel):
         super().__init__()
 
         self.setAlignment(Qt.AlignCenter)
-        self.setText('\n\n Drop a Config or Recording File Here \n\n' + HOTKEYS_TEXT)
+        self.setText('\n\n Drop a Recording File Here \n\n' + HOTKEYS_TEXT)
         self.setStyleSheet('''
             QLabel{
                 border: 4px dashed #aaa
@@ -105,19 +105,14 @@ class GUI(QWidget):
 
     def dropEvent(self, event):
         if eddiebot.playing:
-            print("Recording currently playing, can't change recording")
+            print("Recording currently playing, can't load new recording")
             return
         if event.mimeData().hasText:
             event.setDropAction(Qt.CopyAction)
             file_path: str = event.mimeData().urls()[0].toLocalFile()
-            if file_path.endswith('.json'):
-                eddiebot.config_file = file_path
-                eddiebot.reset()
-            elif file_path.endswith('.txt'):
+            if file_path.endswith('.txt'):
                 eddiebot.recordings_file = file_path
                 eddiebot.load_recordings()
-            else:
-                print("Invalid suffix (valid options are .json for a config file and .txt for recordings file")
             event.accept()
         else:
             event.ignore()
@@ -130,7 +125,6 @@ if __name__ == "__main__":
         my_handler.set_filter(XInput.BUTTON_RIGHT_SHOULDER + XInput.FILTER_PRESSED_ONLY)
         my_gamepad_thread = XInput.GamepadThread(my_handler)
     eddiebot.vcontroller.connect()
-    #eddiebot.reset()
     app = QApplication(sys.argv)
     w = GUI()
     w.show()
