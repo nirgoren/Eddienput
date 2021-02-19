@@ -12,25 +12,25 @@
   },
 
   "P1_directions": {
-    "2": { "Dpad": 2 },
-    "4": { "Dpad": 4 },
-    "6": { "Dpad": 8 },
-    "8": { "Dpad": 1 },
-    "1": { "Dpad": 6 },
-    "3": { "Dpad": 10 },
-    "7": { "Dpad": 5 },
-    "9": { "Dpad": 9 }
+    "2": { "Dpad": "down" },
+    "4": { "Dpad": "left" },
+    "6": { "Dpad": "right" },
+    "8": { "Dpad": "up" },
+    "1": { "Dpad": "down_left" },
+    "3": { "Dpad": "down_right" },
+    "7": { "Dpad": "up_left" },
+    "9": { "Dpad": "up_right" }
   },
 
   "P2_directions": {
-    "2": { "Dpad": 2 },
-    "4": { "Dpad": 8 },
-    "6": { "Dpad": 4 },
-    "8": { "Dpad": 1 },
-    "1": { "Dpad": 10 },
-    "3": { "Dpad": 6 },
-    "7": { "Dpad": 9 },
-    "9": { "Dpad": 5 }
+    "2": { "Dpad": "down" },
+    "4": { "Dpad": "right" },
+    "6": { "Dpad": "left" },
+    "8": { "Dpad": "up" },
+    "1": { "Dpad": "down_right" },
+    "3": { "Dpad": "down_left" },
+    "7": { "Dpad": "up_right" },
+    "9": { "Dpad": "up_left" }
   },
 
   "Macros": {

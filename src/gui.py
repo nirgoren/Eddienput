@@ -50,8 +50,10 @@ def on_press(key):
         worker = Worker(eddiebot.run_scenario)
         eddiebot.threadpool.start(worker)
     if str(key) == "Key.home":  # home
-        eddiebot.tap_button('BtnStart')
+        eddiebot.tap_button('BtnStart', 1)
         print("Pressed start")
+    # if str(key) == "Key.right":
+    #     eddiebot.tap_button('Dpad', 8)
 
 
 class MyHandler(XInput.EventHandler):

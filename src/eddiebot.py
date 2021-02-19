@@ -41,6 +41,17 @@ buttons_queue = []
 sequences = []
 log_queue = []
 
+direction_value_map = {
+    "down": 0x2,
+    "left": 0x4,
+    "right": 0x8,
+    "up": 0x1,
+    "down_left": 0x6,
+    "down_right": 0xA,
+    "up_left": 0x5,
+    "up_right": 0x9
+}
+
 threadpool = QThreadPool()
 
 
@@ -60,8 +71,8 @@ def release_all():
     vcontroller.set_state(controller_state)
 
 
-def tap_button(button):
-    set_button_value(button, 1)
+def tap_button(button, value=1):
+    set_button_value(button, value)
     vcontroller.set_state(controller_state)
     clock.reset()
     clock.sleep()
@@ -148,7 +159,7 @@ def process_frame(frame):
     for button, command in frame:
         value = 1
         if not isinstance(button, str):
-            value = button['Dpad']
+            value = direction_value_map[button['Dpad']]
             button = 'Dpad'
         if command == 'tap':
             frame_queue.append((button, value))
