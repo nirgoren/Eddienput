@@ -26,6 +26,7 @@ clock = Clock(FPS)
 to_release = set()
 
 playing = False
+mute = False
 P1_directions_map = {}
 P2_directions_map = {}
 direction_maps = [P1_directions_map, P2_directions_map]
@@ -54,6 +55,15 @@ direction_value_map = {
 
 threadpool = QThreadPool()
 
+
+def toggle_mute():
+    global mute
+    if not mute:
+        mute = True
+        print('Sequence start/end sound muted')
+    else:
+        mute = False
+        print('Sequence start/end sound un-muted')
 
 def play_sound_async(sound):
     worker = Worker(playsound, sound)
@@ -202,9 +212,11 @@ def run_scenario():
                 process_recording(recordings[c])
     print("Playing sequence")
     clock.reset()
-    play_sound_async(START_PLAYING_SOUND)
+    if not mute:
+        play_sound_async(START_PLAYING_SOUND)
     play_queue()
-    play_sound_async(END_PLAYING_SOUND)
+    if not mute:
+        play_sound_async(END_PLAYING_SOUND)
     print("Sequence complete")
 
 
@@ -268,10 +280,10 @@ def load_recordings():
     global sequences
     global weights
     if not load_config():
-        print('Did not load recordings from', recordings_file)
+        print('Failed to load recordings from', recordings_file)
         return
     if not parse_recordings():
-        print('Did not load recordings from', recordings_file)
+        print('Failed to load recordings from', recordings_file)
         return
     # sequences[i][j] is the j'th option of the i'th part of the whole sequences
     sequences = []

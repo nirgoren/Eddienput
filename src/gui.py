@@ -18,13 +18,14 @@ HOTKEYS_TEXT =\
     Decrease number of repetitions - (ctrl+"-")
     Press start on P2 controller - Home key
     Play sequence - numkey0 or ctrl+p
-    Stop sequence - ctrl+x \n\n'''
+    Stop sequence - ctrl+x 
+    Toggle sequence start/end sound \n\n'''
 
 XInput.get_connected()
 
 
 def on_press(key):
-    #print("received", str(key))
+    print("received", str(key))
     if str(key) == r"'\x18'":
         eddiebot.playing = False
     elif eddiebot.playing:
@@ -52,6 +53,8 @@ def on_press(key):
     if str(key) == "Key.home":  # home
         eddiebot.tap_button('BtnStart', 1)
         print("Pressed start")
+    if str(key) == r"'\r'":  # ctrl+m
+        eddiebot.toggle_mute()
     # if str(key) == "Key.right":
     #     eddiebot.tap_button('Dpad', 8)
 
@@ -121,6 +124,7 @@ class GUI(QWidget):
 
 
 if __name__ == "__main__":
+    # redirect stdout https://gist.github.com/rbonvall/9982648
     if XInput.get_connected()[0]:
         print('XInput controller detected')
         my_handler: XInput.EventHandler = MyHandler(0)
