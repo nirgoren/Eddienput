@@ -6,12 +6,12 @@ import random
 import json
 import vcontroller
 from worker import Worker
-from playsound import playsound
+import winsound
 import re
 
-START_PLAYING_SOUND = 'boop.wav'
-END_PLAYING_SOUND = 'boop_low.wav'
-QUE_SOUND = 'beep.wav'
+START_PLAYING_SOUND = "boop.wav"
+END_PLAYING_SOUND = "boop_low.wav"
+QUE_SOUND = "beep.wav"
 WAIT_CONST = 'W'
 NEXT_CONST = 'next'
 COMMENT_SYMBOL = '#'
@@ -65,9 +65,9 @@ def toggle_mute():
         mute = False
         print('Sequence start/end sound un-muted')
 
+
 def play_sound_async(sound):
-    worker = Worker(playsound, sound)
-    threadpool.start(worker)
+    winsound.PlaySound(sound, winsound.SND_ASYNC | winsound.SND_ALIAS)
 
 
 def set_button_value(button, value):
@@ -106,9 +106,9 @@ def play_queue():
         else:
             release_all()
     playing = False
-    return
     # for button, val, t in log_queue:
     #     print("pressed:", button, val, t)
+    return
 
 
 # parse a string into a series of frame commands

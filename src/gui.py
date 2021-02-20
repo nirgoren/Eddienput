@@ -9,6 +9,8 @@ from worker import Worker
 import eddiebot
 
 
+capture_activation_key = False
+
 HOTKEYS_TEXT =\
     '''Hotkeys:
     Reload script - ctrl+r
@@ -22,10 +24,13 @@ HOTKEYS_TEXT =\
     Toggle sequence start/end sound \n\n'''
 
 XInput.get_connected()
+LT_VALUE = -1
+RT_VALUE = -2
+activation_key = None
 
 
 def on_press(key):
-    print("received", str(key))
+    #print("received", str(key))
     if str(key) == r"'\x18'":
         eddiebot.playing = False
     elif eddiebot.playing:
@@ -55,18 +60,46 @@ def on_press(key):
         print("Pressed start")
     if str(key) == r"'\r'":  # ctrl+m
         eddiebot.toggle_mute()
+    if str(key) == r"'\x01'":  # ctrl+m
+        global capture_activation_key
+        global activation_key
+        activation_key = None
+        capture_activation_key = True
+        print("Capturing activation key...")
     # if str(key) == "Key.right":
     #     eddiebot.tap_button('Dpad', 8)
 
 
 class MyHandler(XInput.EventHandler):
     def process_button_event(self, event: XInput.Event):
-        # if not eddiebot.playing:
-        #     worker = Worker(eddiebot.run_scenario)
-        #     eddiebot.threadpool.start(worker)
+        global capture_activation_key
+        global activation_key
+        if event.type == XInput.EVENT_BUTTON_PRESSED:
+            print(event.button_id)
+            if capture_activation_key:
+                capture_activation_key = False
+                activation_key = event.button_id
+                print('Activation key set to', event.button)
+            elif event.button_id == activation_key:
+                if not eddiebot.playing:
+                    worker = Worker(eddiebot.run_scenario)
+                    eddiebot.threadpool.start(worker)
         pass
 
     def process_trigger_event(self, event):
+        global capture_activation_key
+        global activation_key
+        LT, RT = XInput.get_trigger_values(XInput.get_state(0))
+        #print(LT, RT)
+        if LT == 1.0 or RT == 1.0:
+            if capture_activation_key:
+                capture_activation_key = False
+                activation_key = LT_VALUE if LT == 1.0 else RT_VALUE
+                print('Activation key set to', 'Left Trigger' if LT == 1.0 else 'Right Trigger')
+            elif (LT == 1.0 and activation_key == -1) or (RT == 1.0 and activation_key == -2):
+                if not eddiebot.playing:
+                    worker = Worker(eddiebot.run_scenario)
+                    eddiebot.threadpool.start(worker)
         pass
 
     def process_stick_event(self, event):
@@ -128,7 +161,6 @@ if __name__ == "__main__":
     if XInput.get_connected()[0]:
         print('XInput controller detected')
         my_handler: XInput.EventHandler = MyHandler(0)
-        my_handler.set_filter(XInput.BUTTON_RIGHT_SHOULDER + XInput.FILTER_PRESSED_ONLY)
         my_gamepad_thread = XInput.GamepadThread(my_handler)
     eddiebot.vcontroller.connect()
     app = QApplication(sys.argv)
