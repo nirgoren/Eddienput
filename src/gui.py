@@ -21,6 +21,7 @@ HOTKEYS_TEXT =\
     Press start on P2 controller - Home key
     Play sequence - numkey0 or ctrl+p
     Stop sequence - ctrl+x 
+    Map play button - ctrl+a
     Toggle sequence start/end sound \n\n'''
 
 XInput.get_connected()
