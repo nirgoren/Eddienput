@@ -20,6 +20,7 @@ OPTION = 'option'
 MIX_END = 'endmix'
 FPS = 60
 REPETITIONS_DEFAULT = 1
+DIRECTION_MAP_INDEX_DEFAULT = 1  # default to P2 side
 
 resets = 0
 clock = Clock(FPS)
@@ -30,7 +31,7 @@ mute = False
 P1_directions_map = {}
 P2_directions_map = {}
 direction_maps = [P1_directions_map, P2_directions_map]
-direction_map_index = 0
+direction_map_index = 1
 
 recordings_file = ''
 symbols_map = direction_maps[direction_map_index%len(direction_maps)]
@@ -85,6 +86,9 @@ def tap_button(button, value=1):
     set_button_value(button, value)
     vcontroller.set_state(controller_state)
     clock.reset()
+    # wait a bit to make sure the button is registered (for emulators etc)
+    clock.sleep()
+    clock.sleep()
     clock.sleep()
     release_all()
 
@@ -281,10 +285,10 @@ def load_recordings():
     global weights
     if not load_config():
         print('Failed to load recordings from', recordings_file)
-        return
+        return False
     if not parse_recordings():
         print('Failed to load recordings from', recordings_file)
-        return
+        return False
     # sequences[i][j] is the j'th option of the i'th part of the whole sequences
     sequences = []
     weights = []
@@ -332,6 +336,7 @@ def load_recordings():
             sequences[i][j] = string_to_frames(sequences[i][j])
     f.close()
     print("loaded recordings from", recordings_file)
+    return True
 
 
 def load_config():
