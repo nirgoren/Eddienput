@@ -50,11 +50,21 @@ manual_mode = False
 
 
 def on_press(key):
+    global capture_activation_key
+    global activation_key
     key_val = str(key)
-    #print("received", key_val)
+    print("received", key_val)
     if key_val == r"'\x18'":  # ctrl+x
         eddiebot.playing = False
     elif eddiebot.playing:
+        return
+    if capture_activation_key:
+        capture_activation_key = False
+        activation_key = key_val
+        print('Activation key set to', key_val)
+    elif key_val == activation_key:
+        worker = Worker(eddiebot.run_scenario)
+        eddiebot.threadpool.start(worker)
         return
     if eddiebot.recordings_file:
         if key_val == r"'\x12'":  # ctrl+r
@@ -72,7 +82,7 @@ def on_press(key):
             print("Switching to " + sides_representation[1] + " side")
             w.active_side_label.setText('Active side: ' +
                                         sides_representation[1])
-        if key_val == r"<96>" or key_val == r"'\x10'":  # numpad0 or ctrl+p
+        if key_val == r"'\x10'":  # ctrl+p
             worker = Worker(eddiebot.run_scenario)
             eddiebot.threadpool.start(worker)
     if key_val == r"<189>":  # '-'
@@ -90,13 +100,10 @@ def on_press(key):
     if key_val == r"'\r'":  # ctrl+m
         eddiebot.toggle_mute()
         w.mute_label.setText('Mute Start/End Sequence Sound: ' + str(eddiebot.mute))
-    if key_val == r"'\x01'":  # ctrl+d
-        global capture_activation_key
-        global activation_key
-        if controller_detected:
-            activation_key = None
-            capture_activation_key = True
-            print("Capturing activation key...")
+    if key_val == r"'\x04'":  # ctrl+d
+        activation_key = None
+        capture_activation_key = True
+        print("Capturing activation key...")
     if key_val == "Key.insert":  # insert
         global manual_mode
         if not manual_mode:
@@ -115,7 +122,6 @@ class MyHandler(XInput.EventHandler):
         global capture_activation_key
         global activation_key
         if event.type == XInput.EVENT_BUTTON_PRESSED:
-            print(event.button_id)
             if capture_activation_key:
                 capture_activation_key = False
                 activation_key = event.button_id
