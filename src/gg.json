@@ -1,5 +1,7 @@
 {
-    "Symbols": {
+  "FPS": 60,
+
+  "Symbols": {
     "P": "BtnX",
     "K": "BtnA",
     "S": "BtnY",

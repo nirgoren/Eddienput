@@ -37,7 +37,7 @@ HOTKEYS_TEXT =\
     Press Start on P2 Controller - Home Key
     Press select on P2 Controller - End Key
     Toggle Manual P2 Control (for Mapping) - Insert Key
-    Map Play Button - ctrl+a
+    Map Play Button - ctrl+d
     Play Sequence - ctrl+p or mapped button
     Stop Sequence - ctrl+x 
     Toggle Sequence Start/End Sound - ctrl+m \n\n'''
@@ -53,7 +53,7 @@ def on_press(key):
     global capture_activation_key
     global activation_key
     key_val = str(key)
-    print("received", key_val)
+    #print("received", key_val)
     if key_val == r"'\x18'":  # ctrl+x
         eddiebot.playing = False
     elif eddiebot.playing:

@@ -5,7 +5,6 @@ import time
 import random
 import json
 import vcontroller
-from worker import Worker
 import winsound
 import re
 
@@ -347,6 +346,7 @@ def load_config():
     global macros_map
     global repetitions
     global recordings_file
+    global FPS
     with open(recordings_file, 'r') as f:
         config_file = f.readline().strip()
     try:
@@ -355,6 +355,7 @@ def load_config():
         print("Could not read file:", config_file)
         return False
     config = json.load(f)
+    FPS = config["FPS"]
     P1_directions_map = config["P1_directions"]
     P2_directions_map = config["P2_directions"]
     direction_maps = [P1_directions_map, P2_directions_map]
