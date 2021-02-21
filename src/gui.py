@@ -37,9 +37,9 @@ HOTKEYS_TEXT =\
     Press Start on P2 Controller - Home Key
     Press select on P2 Controller - End Key
     Toggle Manual P2 Control (for Mapping) - Insert Key
-    Play Sequence - numkey0 or ctrl+p
-    Stop Sequence - ctrl+x 
     Map Play Button - ctrl+a
+    Play Sequence - ctrl+p or mapped button
+    Stop Sequence - ctrl+x 
     Toggle Sequence Start/End Sound - ctrl+m \n\n'''
 
 XInput.get_connected()
