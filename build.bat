@@ -11,4 +11,5 @@ copy src\boop_low.wav dist\eddiebot\boop_low.wav
 copy src\recordings.txt dist\eddiebot\recordings.txt
 copy README.md dist\eddiebot\readme.txt
 copy src\gg.json dist\eddiebot\gg.json
+copy LICENSE dist\eddiebot\LICENSE
 PAUSE
