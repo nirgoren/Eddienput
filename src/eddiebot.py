@@ -17,12 +17,13 @@ COMMENT_SYMBOL = '#'
 MIX_START = 'startmix'
 OPTION = 'option'
 MIX_END = 'endmix'
-FPS = 60
+FPS_DEFAULT = 60
 REPETITIONS_DEFAULT = 1
 DIRECTION_MAP_INDEX_DEFAULT = 1  # default to P2 side
 
+fps = FPS_DEFAULT
 resets = 0
-clock = Clock(FPS)
+clock = Clock(fps)
 to_release = set()
 
 playing = False
@@ -227,6 +228,8 @@ def run_scenario():
 def parse_recordings() -> bool:
     with open(recordings_file, 'r') as f:
         mix_mode = False
+        awaiting_option_declaration = False
+        awaiting_option_definition = False
         for i, line in enumerate(f):
             if i == 0:  # Skip first line (config file)
                 continue
@@ -240,12 +243,16 @@ def parse_recordings() -> bool:
             elif line == 'startmix':
                 if not mix_mode:
                     mix_mode = True
+                    awaiting_option_declaration = True
                 else:
                     print('Line', i+1, ': Entering mix mode while in mix mode')
                     return False
             elif line.startswith('option'):
                 if not mix_mode:
                     print('Line', i+1, ': Defining an option while not in mix mode')
+                    return False
+                if awaiting_option_definition:
+                    print('Line', i + 1, ': Defining an option while expecting option definition')
                     return False
                 temp = line.split()
                 if len(temp) > 2:
@@ -255,24 +262,37 @@ def parse_recordings() -> bool:
                     if not temp[1].isnumeric():
                         print('Line', i + 1, ': Invalid option line, option weight must be an integer')
                         return False
+                awaiting_option_declaration = False
+                awaiting_option_definition = True
             elif line == 'endmix':
-                if mix_mode:
-                    mix_mode = False
-                else:
-                    print('Line', i + 1, ': Exiting mix mode while in not in mix mode')
+                if awaiting_option_declaration:
+                    print('Line', i + 1, ': Exiting mix mode while expecting option declaration')
                     return False
+                elif awaiting_option_definition:
+                    print('Line', i + 1, ': Exiting mix mode while expecting option definition')
+                    return False
+                elif not mix_mode:
+                    print('Line', i + 1, ': Exiting mix mode while not in mix mode')
+                    return False
+                else:
+                    mix_mode = False
             else:
-                frames = line.split()
-                for frame in frames:
-                    commands = frame.split('+')
-                    for command in commands:
-                        if command.startswith('[') or command.startswith(']'):
-                            command = command[1:-1]
-                        if command.startswith('W') and command[1:].isnumeric():
-                            pass
-                        elif command not in symbols_map and command not in direction_maps and command not in macros_map:
-                            print('Line', i + 1, ': Invalid symbol:', command)
-                            return False
+                if not awaiting_option_declaration:
+                    awaiting_option_definition = False
+                    frames = line.split()
+                    for frame in frames:
+                        commands = frame.split('+')
+                        for command in commands:
+                            if command.startswith('[') or command.startswith(']'):
+                                command = command[1:-1]
+                            if command.startswith('W') and command[1:].isnumeric():
+                                pass
+                            elif command not in symbols_map and command not in direction_maps and command not in macros_map:
+                                print('Line', i + 1, ': Invalid symbol:', command)
+                                return False
+                else:
+                    print('Line', i + 1, ': expecting an option definition')
+                    return False
     if mix_mode:
         print('Did not properly exit mix mode')
         return False
@@ -346,7 +366,8 @@ def load_config():
     global macros_map
     global repetitions
     global recordings_file
-    global FPS
+    global fps
+    global clock
     with open(recordings_file, 'r') as f:
         config_file = f.readline().strip()
     try:
@@ -355,7 +376,11 @@ def load_config():
         print("Could not read file:", config_file)
         return False
     config = json.load(f)
-    FPS = config["FPS"]
+    if "FPS" in config:
+        fps = config["FPS"]
+    else:
+        fps = FPS_DEFAULT
+    clock = Clock(fps)
     P1_directions_map = config["P1_directions"]
     P2_directions_map = config["P2_directions"]
     direction_maps = [P1_directions_map, P2_directions_map]

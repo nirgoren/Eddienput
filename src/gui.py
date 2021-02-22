@@ -10,7 +10,12 @@ import eddiebot
 
 controller_detected = False
 capture_activation_key = None
-sides_representation = ['P1', 'P2']
+sides_representation = ['Player 1', 'Player 2']
+
+on_off_map = {
+    True: 'On',
+    False: 'Off'
+}
 
 manual_action_map = {
     'Key.left': ('Dpad', eddiebot.direction_value_map['left']),
@@ -29,6 +34,7 @@ manual_action_map = {
 
 HOTKEYS_TEXT =\
     '''Hotkeys:
+    
     Reload Script - ctrl+r
     P1 side - ctrl+1
     P2 side - ctrl+2
@@ -99,7 +105,7 @@ def on_press(key):
         eddiebot.tap_button('BtnBack', 1)
     if key_val == r"'\r'":  # ctrl+m
         eddiebot.toggle_mute()
-        w.mute_label.setText('Mute Start/End Sequence Sound: ' + str(eddiebot.mute))
+        w.mute_label.setText('Mute Start/End Sequence Sound: ' + on_off_map[eddiebot.mute])
     if key_val == r"'\x04'":  # ctrl+d
         activation_key = None
         capture_activation_key = True
@@ -198,7 +204,7 @@ class GUI(QWidget):
 
         self.mute_label = QLabel()
         self.mute_label.setAlignment(Qt.AlignCenter)
-        self.mute_label.setText('Mute Start/End Sequence Sound: ' + str(eddiebot.mute))
+        self.mute_label.setText('Mute Start/End Sequence Sound: ' + on_off_map[eddiebot.mute])
         main_layout.addWidget(self.mute_label)
 
         self.setLayout(main_layout)
