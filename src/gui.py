@@ -67,7 +67,8 @@ def on_press(key):
     if capture_activation_key:
         capture_activation_key = False
         activation_key = key_val
-        print('Activation key set to', key_val)
+        print('Playback button set to', key_val)
+        w.playback_button_label.setText('Playback button: \n' + activation_key)
     elif key_val == activation_key:
         worker = Worker(eddiebot.run_scenario)
         eddiebot.threadpool.start(worker)
@@ -109,7 +110,7 @@ def on_press(key):
     if key_val == r"'\x04'":  # ctrl+d
         activation_key = None
         capture_activation_key = True
-        print("Capturing activation key...")
+        print("Capturing playback button...")
     if key_val == "Key.insert":  # insert
         global manual_mode
         if not manual_mode:
@@ -131,7 +132,8 @@ class MyHandler(XInput.EventHandler):
             if capture_activation_key:
                 capture_activation_key = False
                 activation_key = event.button_id
-                print('Activation key set to', event.button)
+                print('Playback button set to', event.button)
+                w.playback_button_label.setText('Playback button: \n' + event.button)
             elif event.button_id == activation_key:
                 if not eddiebot.playing:
                     worker = Worker(eddiebot.run_scenario)
@@ -147,7 +149,8 @@ class MyHandler(XInput.EventHandler):
             if capture_activation_key:
                 capture_activation_key = False
                 activation_key = LT_VALUE if LT == 1.0 else RT_VALUE
-                print('Activation key set to', 'Left Trigger' if LT == 1.0 else 'Right Trigger')
+                print('Playback button set to', 'Left Trigger' if LT == 1.0 else 'Right Trigger')
+                w.playback_button_label.setText('Playback button: \n' + 'Left Trigger' if LT == 1.0 else 'Right Trigger')
             elif (LT == 1.0 and activation_key == -1) or (RT == 1.0 and activation_key == -2):
                 if not eddiebot.playing:
                     worker = Worker(eddiebot.run_scenario)
@@ -190,6 +193,11 @@ class GUI(QWidget):
         self.recordings_file_label.setAlignment(Qt.AlignCenter)
         self.recordings_file_label.setText('Active Recording File: \n')
         main_layout.addWidget(self.recordings_file_label)
+
+        self.playback_button_label = QLabel()
+        self.playback_button_label.setAlignment(Qt.AlignCenter)
+        self.playback_button_label.setText('Playback button: \n')
+        main_layout.addWidget(self.playback_button_label)
 
         self.active_side_label = QLabel()
         self.active_side_label.setAlignment(Qt.AlignCenter)
