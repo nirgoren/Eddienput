@@ -150,7 +150,7 @@ class MyHandler(XInput.EventHandler):
                 capture_activation_key = False
                 activation_key = LT_VALUE if LT == 1.0 else RT_VALUE
                 print('Playback button set to', 'Left Trigger' if LT == 1.0 else 'Right Trigger')
-                w.playback_button_label.setText('Playback button: \n' + 'Left Trigger' if LT == 1.0 else 'Right Trigger')
+                w.playback_button_label.setText('Playback button: \n' + ('Left Trigger' if LT == 1.0 else 'Right Trigger'))
             elif (LT == 1.0 and activation_key == -1) or (RT == 1.0 and activation_key == -2):
                 if not eddiebot.playing:
                     worker = Worker(eddiebot.run_scenario)
