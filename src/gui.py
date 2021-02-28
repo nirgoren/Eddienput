@@ -38,8 +38,8 @@ HOTKEYS_TEXT =\
     '''Hotkeys:
     
     Reload Script - ctrl+r
-    P1 side - ctrl+1
-    P2 side - ctrl+2
+    Player 1 side - ctrl+1
+    Player 2 side - ctrl+2
     Increase Number of Repetitions - (ctrl+"=")
     Decrease Number of Repetitions - (ctrl+"-")
     Press Start on P2 Controller - Home Key
