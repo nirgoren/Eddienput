@@ -21,6 +21,8 @@ FPS_DEFAULT = 60
 REPETITIONS_DEFAULT = 1
 DIRECTION_MAP_INDEX_DEFAULT = 1  # default to P2 side
 
+writer = None
+
 fps = FPS_DEFAULT
 resets = 0
 clock = Clock(fps)
@@ -61,10 +63,10 @@ def toggle_mute():
     global mute
     if not mute:
         mute = True
-        print('Sequence start/end sound muted')
+        print('Sequence start/end sound muted', file=writer)
     else:
         mute = False
-        print('Sequence start/end sound un-muted')
+        print('Sequence start/end sound un-muted', file=writer)
 
 
 def play_sound_async(sound):
@@ -214,14 +216,14 @@ def run_scenario():
                         c = j
                         break
                 process_recording(recordings[c])
-    print("Playing sequence")
+    print("Playing sequence", file=writer)
     clock.reset()
     if not mute:
         play_sound_async(START_PLAYING_SOUND)
     play_queue()
     if not mute:
         play_sound_async(END_PLAYING_SOUND)
-    print("Sequence complete")
+    print("Sequence complete", file=writer)
 
 
 # Returns true iff the recordings file is valid
@@ -245,34 +247,34 @@ def parse_recordings() -> bool:
                     mix_mode = True
                     awaiting_option_declaration = True
                 else:
-                    print('Line', i+1, ': Entering mix mode while in mix mode')
+                    print('Line', i+1, ': Entering mix mode while in mix mode', file=writer)
                     return False
             elif line.startswith('option'):
                 if not mix_mode:
-                    print('Line', i+1, ': Defining an option while not in mix mode')
+                    print('Line', i+1, ': Defining an option while not in mix mode', file=writer)
                     return False
                 if awaiting_option_definition:
-                    print('Line', i + 1, ': Defining an option while expecting option definition')
+                    print('Line', i + 1, ': Defining an option while expecting option definition', file=writer)
                     return False
                 temp = line.split()
                 if len(temp) > 2:
-                    print('Line', i+1, ': Invalid option line')
+                    print('Line', i+1, ': Invalid option line', file=writer)
                     return False
                 elif len(temp) > 1:
                     if not temp[1].isnumeric():
-                        print('Line', i + 1, ': Invalid option line, option weight must be an integer')
+                        print('Line', i + 1, ': Invalid option line, option weight must be an integer', file=writer)
                         return False
                 awaiting_option_declaration = False
                 awaiting_option_definition = True
             elif line == 'endmix':
                 if awaiting_option_declaration:
-                    print('Line', i + 1, ': Exiting mix mode while expecting option declaration')
+                    print('Line', i + 1, ': Exiting mix mode while expecting option declaration', file=writer)
                     return False
                 elif awaiting_option_definition:
-                    print('Line', i + 1, ': Exiting mix mode while expecting option definition')
+                    print('Line', i + 1, ': Exiting mix mode while expecting option definition', file=writer)
                     return False
                 elif not mix_mode:
-                    print('Line', i + 1, ': Exiting mix mode while not in mix mode')
+                    print('Line', i + 1, ': Exiting mix mode while not in mix mode', file=writer)
                     return False
                 else:
                     mix_mode = False
@@ -288,13 +290,13 @@ def parse_recordings() -> bool:
                             if command.startswith('W') and command[1:].isnumeric():
                                 pass
                             elif command not in symbols_map and command not in direction_maps and command not in macros_map:
-                                print('Line', i + 1, ': Invalid symbol:', command)
+                                print('Line', i + 1, ': Invalid symbol:', command, file=writer)
                                 return False
                 else:
-                    print('Line', i + 1, ': expecting an option definition')
+                    print('Line', i + 1, ': expecting an option definition', file=writer)
                     return False
     if mix_mode:
-        print('Did not properly exit mix mode')
+        print('Did not properly exit mix mode', file=writer)
         return False
     return True
 
@@ -303,10 +305,10 @@ def load_recordings():
     global sequences
     global weights
     if not load_config():
-        print('Failed to load recordings from', recordings_file)
+        print('Failed to load recordings from', recordings_file, file=writer)
         return False
     if not parse_recordings():
-        print('Failed to load recordings from', recordings_file)
+        print('Failed to load recordings from', recordings_file, file=writer)
         return False
     # sequences[i][j] is the j'th option of the i'th part of the whole sequences
     sequences = []
@@ -354,7 +356,7 @@ def load_recordings():
         for j in range(len(sequences[i])):
             sequences[i][j] = string_to_frames(sequences[i][j])
     f.close()
-    print("loaded recordings from", recordings_file)
+    print("loaded recordings from", recordings_file, file=writer)
     return True
 
 
@@ -373,7 +375,7 @@ def load_config():
     try:
         f = open(config_file, 'r')
     except OSError:
-        print("Could not read file:", config_file)
+        print("Could not read file:", config_file, file=writer)
         return False
     config = json.load(f)
     if "FPS" in config:
@@ -387,7 +389,7 @@ def load_config():
     symbols_map = direction_maps[direction_map_index]
     symbols_map.update(config["Symbols"])
     macros_map = config["Macros"]
-    print("Loaded config from", config_file)
+    print("Loaded config from", config_file, file=writer)
     return True
 
 
@@ -395,7 +397,7 @@ def reset():
     global resets
     load_recordings()
     resets += 1
-    print('Eddie is ready ('+str(resets)+')')
+    print('Eddie is ready ('+str(resets)+')', file=writer)
 
 
 

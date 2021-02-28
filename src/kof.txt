@@ -1,2 +1,3 @@
-gg.json
-2 [3] W2 [6]+[P] W2 ]6[+]P[
+configs/kof2.json
+2 [3] W2 [6]+[A] W2 ]6[+]A[
+d [d/f] W2 [f]+[A] W2 ]f[+]A[

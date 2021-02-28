@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPlainTextEdit, QTextEdit
 from PyQt5.QtCore import Qt, QObject, pyqtSignal, QRunnable, pyqtSlot, QThreadPool, QProcess
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QTextCursor
 from pynput.keyboard import Listener
 import XInput
 import sys
@@ -8,6 +8,8 @@ import traceback
 from worker import Worker
 import eddiebot
 
+
+writer = None
 controller_detected = False
 capture_activation_key = None
 sides_representation = ['Player 1', 'Player 2']
@@ -67,7 +69,7 @@ def on_press(key):
     if capture_activation_key:
         capture_activation_key = False
         activation_key = key_val
-        print('Playback button set to', key_val)
+        print('Playback button set to', key_val, file=writer)
         w.playback_button_label.setText('Playback button: \n' + activation_key)
     elif key_val == activation_key:
         worker = Worker(eddiebot.run_scenario)
@@ -75,18 +77,18 @@ def on_press(key):
         return
     if eddiebot.recordings_file:
         if key_val == r"'\x12'":  # ctrl+r
-            print("Reloading script")
+            print("Reloading script", file=writer)
             eddiebot.reset()
         if key_val == r"<49>":  # ctrl+1
             eddiebot.direction_map_index = 0
-            print("Switching to " + sides_representation[0] + " side")
+            print("Switching to " + sides_representation[0] + " side", file=writer)
             w.active_side_label.setText('Active side: ' +
                                         sides_representation[0])
             eddiebot.reset()
         if key_val == r"<50>":  # ctrl+2
             eddiebot.direction_map_index = 1
             eddiebot.reset()
-            print("Switching to " + sides_representation[1] + " side")
+            print("Switching to " + sides_representation[1] + " side", file=writer)
             w.active_side_label.setText('Active side: ' +
                                         sides_representation[1])
         if key_val == r"'\x10'":  # ctrl+p
@@ -94,11 +96,11 @@ def on_press(key):
             eddiebot.threadpool.start(worker)
     if key_val == r"<189>":  # '-'
         eddiebot.repetitions = max(1, eddiebot.repetitions - 1)
-        print("Number of repetitions set to", eddiebot.repetitions)
+        print("Number of repetitions set to", eddiebot.repetitions, file=writer)
         w.num_repetitions_label.setText('Number of repetitions: ' + str(eddiebot.repetitions))
     if key_val == r"<187>":  # '='
         eddiebot.repetitions = min(100, eddiebot.repetitions + 1)
-        print("Number of repetitions set to", eddiebot.repetitions)
+        print("Number of repetitions set to", eddiebot.repetitions, file=writer)
         w.num_repetitions_label.setText('Number of repetitions: ' + str(eddiebot.repetitions))
     if key_val == "Key.home":  # home
         eddiebot.tap_button('BtnStart', 1)
@@ -110,13 +112,15 @@ def on_press(key):
     if key_val == r"'\x04'":  # ctrl+d
         activation_key = None
         capture_activation_key = True
-        print("Capturing playback button...")
+        print("Capturing playback button...", file=writer)
     if key_val == "Key.insert":  # insert
         global manual_mode
         if not manual_mode:
-            print('Manual mode activated')
+            print('''Manual mode activated
+Please set up player 2 buttons and then deactivate. (Manual mode is not fit for playing)
+Arrow keys=Dpad, Q=LB, A=LT, W=X, S=A, E=Y, D=B, R=RB, F=RT''', file=writer)
         else:
-            print('Manual mode deactivated')
+            print('Manual mode deactivated', file=writer)
         manual_mode = not manual_mode
     # manual control with the keyboard
     if manual_mode and not eddiebot.playing:
@@ -132,7 +136,7 @@ class MyHandler(XInput.EventHandler):
             if capture_activation_key:
                 capture_activation_key = False
                 activation_key = event.button_id
-                print('Playback button set to', event.button)
+                print('Playback button set to', event.button, file=writer)
                 w.playback_button_label.setText('Playback button: \n' + event.button)
             elif event.button_id == activation_key:
                 if not eddiebot.playing:
@@ -144,12 +148,11 @@ class MyHandler(XInput.EventHandler):
         global capture_activation_key
         global activation_key
         LT, RT = XInput.get_trigger_values(XInput.get_state(0))
-        #print(LT, RT)
         if LT == 1.0 or RT == 1.0:
             if capture_activation_key:
                 capture_activation_key = False
                 activation_key = LT_VALUE if LT == 1.0 else RT_VALUE
-                print('Playback button set to', 'Left Trigger' if LT == 1.0 else 'Right Trigger')
+                print('Playback button set to', 'Left Trigger' if LT == 1.0 else 'Right Trigger', file=writer)
                 w.playback_button_label.setText('Playback button: \n' + ('Left Trigger' if LT == 1.0 else 'Right Trigger'))
             elif (LT == 1.0 and activation_key == -1) or (RT == 1.0 and activation_key == -2):
                 if not eddiebot.playing:
@@ -177,11 +180,30 @@ class DropFileLabel(QLabel):
         ''')
 
 
+class TextEdit(QTextEdit):
+    def append_text(self, string):
+        super().moveCursor(QTextCursor.End)
+        super().insertPlainText(string)
+
+
+class Writer(QObject):
+    append_text_signal = pyqtSignal(str)
+
+    def __init__(self, text_edit: TextEdit):
+        super(Writer, self).__init__()
+        self.text_edit = text_edit
+        self.append_text_signal.connect(text_edit.append_text)
+
+    def write(self, string):
+        print(string, end='')
+        self.append_text_signal.emit(string)
+
+
 class GUI(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.resize(500, 500)
+        self.resize(400, 500)
         self.setAcceptDrops(True)
         self.setWindowTitle('EddieBot')
         main_layout = QVBoxLayout()
@@ -191,12 +213,12 @@ class GUI(QWidget):
 
         self.recordings_file_label = QLabel()
         self.recordings_file_label.setAlignment(Qt.AlignCenter)
-        self.recordings_file_label.setText('Active Recording File: \n')
+        self.recordings_file_label.setText('Active Recording File: \n ---')
         main_layout.addWidget(self.recordings_file_label)
 
         self.playback_button_label = QLabel()
         self.playback_button_label.setAlignment(Qt.AlignCenter)
-        self.playback_button_label.setText('Playback button: \n')
+        self.playback_button_label.setText('Playback button: \n ---')
         main_layout.addWidget(self.playback_button_label)
 
         self.active_side_label = QLabel()
@@ -215,6 +237,12 @@ class GUI(QWidget):
         self.mute_label.setText('Mute Start/End Sequence Sound: ' + on_off_map[eddiebot.mute])
         main_layout.addWidget(self.mute_label)
 
+        self.text_edit = TextEdit()
+        self.text_edit.setReadOnly(True)
+        self.text_edit.setMinimumHeight(300)
+
+        main_layout.addWidget(self.text_edit)
+
         self.setLayout(main_layout)
         self.process = QProcess(self)
 
@@ -226,7 +254,7 @@ class GUI(QWidget):
 
     def dropEvent(self, event):
         if eddiebot.playing:
-            print("Recording currently playing, can't load new recording")
+            print("Recording currently playing, can't load new recording", file=writer)
             return
         if event.mimeData().hasText:
             event.setDropAction(Qt.CopyAction)
@@ -245,14 +273,18 @@ class GUI(QWidget):
 
 if __name__ == "__main__":
     # redirect stdout https://gist.github.com/rbonvall/9982648
-    if XInput.get_connected()[0]:
-        controller_detected = True
-        print('XInput controller detected')
-        my_handler: XInput.EventHandler = MyHandler(0)
-        my_gamepad_thread = XInput.GamepadThread(my_handler)
     eddiebot.vcontroller.connect()
     app = QApplication(sys.argv)
     w = GUI()
+    writer = Writer(w.text_edit)
+    eddiebot.writer = writer
+    if XInput.get_connected()[0]:
+        controller_detected = True
+        print('XInput controller detected!', file=writer)
+        my_handler: XInput.EventHandler = MyHandler(0)
+        my_gamepad_thread = XInput.GamepadThread(my_handler)
+    else:
+        print('No XInput controller detected', file=writer)
     w.show()
     with Listener(on_press=on_press) as listener:
         app.exec_()
