@@ -1,7 +1,7 @@
 rmdir /s /q "./build"
 rmdir /s /q "./dist"
 del "./eddiebot.spec"
-pyinstaller src/gui.py --name eddiebot
+pyinstaller src/gui.py --noconsole --name eddiebot
 copy ViGEmBusSetup_x64.msi dist\eddiebot\ViGEmBusSetup_x64.msi
 copy src\ViGEmClient.dll dist\eddiebot\ViGEmClient.dll
 copy C:\dev\eddiebot\vcontroller\x64\Release\vcontroller.dll dist\eddiebot\vcontroller.dll

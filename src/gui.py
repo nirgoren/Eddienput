@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPlainTextEdit, QTextEdit
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPlainTextEdit, QTextEdit, QHBoxLayout
 from PyQt5.QtCore import Qt, QObject, pyqtSignal, QRunnable, pyqtSlot, QThreadPool, QProcess
 from PyQt5.QtGui import QPixmap, QTextCursor
 from pynput.keyboard import Listener
@@ -203,12 +203,15 @@ class GUI(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.resize(400, 500)
+        self.resize(850, 500)
         self.setAcceptDrops(True)
         self.setWindowTitle('EddieBot')
+        h_layout = QHBoxLayout()
         main_layout = QVBoxLayout()
+        h_layout.addLayout(main_layout)
 
         self.drop_file_label = DropFileLabel()
+        self.drop_file_label.setMinimumWidth(350)
         main_layout.addWidget(self.drop_file_label)
 
         self.recordings_file_label = QLabel()
@@ -239,11 +242,12 @@ class GUI(QWidget):
 
         self.text_edit = TextEdit()
         self.text_edit.setReadOnly(True)
-        self.text_edit.setMinimumHeight(300)
+        self.text_edit.setMinimumWidth(500)
+        self.text_edit.width
 
-        main_layout.addWidget(self.text_edit)
+        h_layout.addWidget(self.text_edit)
 
-        self.setLayout(main_layout)
+        self.setLayout(h_layout)
         self.process = QProcess(self)
 
     def dragEnterEvent(self, event):
