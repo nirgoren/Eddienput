@@ -1,6 +1,6 @@
 # eddiebot5000
 Prerequisites:
-Install ScpVbus by following the instrutions here: https://github.com/shauleiz/vXboxInterface/releases
+Install ViGEmBusSetup_x64.msi
 
 Symbols:
 You can use differents symbols, reassign symbols to other buttons, and set up macros in config.json
