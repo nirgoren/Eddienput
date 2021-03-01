@@ -1,6 +1,7 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPlainTextEdit, QTextEdit, QHBoxLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPlainTextEdit, QTextEdit, QHBoxLayout, \
+    QPushButton, QFileDialog
 from PyQt5.QtCore import Qt, QObject, pyqtSignal, QRunnable, pyqtSlot, QThreadPool, QProcess
-from PyQt5.QtGui import QPixmap, QTextCursor
+from PyQt5.QtGui import QPixmap, QTextCursor, QFont
 from pynput.keyboard import Listener
 import XInput
 import sys
@@ -35,20 +36,21 @@ manual_action_map = {
 }
 
 HOTKEYS_TEXT =\
-    '''Hotkeys:
-    
-    Reload Script - ctrl+r
-    Player 1 side - ctrl+1
-    Player 2 side - ctrl+2
-    Increase Number of Repetitions - (ctrl+"=")
-    Decrease Number of Repetitions - (ctrl+"-")
-    Press Start on P2 Controller - Home Key
-    Press select on P2 Controller - End Key
-    Toggle Manual P2 Control (for Mapping) - Insert Key
-    Map Play Button - ctrl+d
-    Play Sequence - ctrl+p or mapped button
-    Stop Sequence - ctrl+x 
-    Toggle Sequence Start/End Sound - ctrl+m \n\n'''
+    '''
+Hotkeys:
+  
+Reload Script                           Ctrl+R
+Player 1 Side                           Ctrl+1
+Player 2 Side                           Ctrl+2
+Increase Number of Repetitions          Ctrl+"="
+Decrease Number of Repetitions          Ctrl+"-"
+Press Start on P2 Controller            Home Key
+Press Select on P2 Controller           End Key
+Toggle Manual P2 Control (for Mapping)  Insert Key
+Map Play Button                         Ctrl+D
+Play Sequence                           Ctrl+P or Mapped Button
+Stop Sequence                           Ctrl+X 
+Toggle Sequence Start/End Sound         Ctrl+M \n\n'''
 
 XInput.get_connected()
 LT_VALUE = -1
@@ -167,12 +169,39 @@ class MyHandler(XInput.EventHandler):
         pass
 
 
+#GUI
+
+
+def set_recording_file():
+    file_path = get_file()
+    if eddiebot.playing:
+        print("Recording currently playing, can't load new recording", file=writer)
+        return
+    if file_path and file_path.endswith('.txt'):
+        temp = eddiebot.recordings_file
+        eddiebot.recordings_file = file_path
+        if eddiebot.load_recordings():
+            w.recordings_file_label.setText('Active Recording File: \n' + eddiebot.recordings_file)
+        else:
+            eddiebot.recordings_file = temp
+
+
+def get_file():
+    dlg = QFileDialog()
+    dlg.setFileMode(QFileDialog.AnyFile)
+    dlg.setDirectory('')
+    if dlg.exec_():
+        filenames = dlg.selectedFiles()
+        return filenames[0]
+
+
 class DropFileLabel(QLabel):
     def __init__(self):
         super().__init__()
 
-        self.setAlignment(Qt.AlignCenter)
-        self.setText('\n\n Drop a Recording File Here \n\n' + HOTKEYS_TEXT)
+        #self.setAlignment(Qt.AlignCenter)
+        self.setFont(QFont("Consolas", 11, QFont.Bold))
+        self.setText('\n\nDrop a Recording File Here \n\n' + HOTKEYS_TEXT)
         self.setStyleSheet('''
             QLabel{
                 border: 4px dashed #aaa
@@ -203,16 +232,25 @@ class GUI(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.resize(850, 500)
+        self.resize(1030, 500)
         self.setAcceptDrops(True)
         self.setWindowTitle('EddieBot')
         h_layout = QHBoxLayout()
         main_layout = QVBoxLayout()
         h_layout.addLayout(main_layout)
 
+        # self.path_box = QTextEdit()
+        # self.path_box.setMaximumHeight(25)
+        # main_layout.addWidget(self.path_box)
+
         self.drop_file_label = DropFileLabel()
-        self.drop_file_label.setMinimumWidth(350)
+        self.drop_file_label.setMinimumWidth(530)
         main_layout.addWidget(self.drop_file_label)
+
+        self.path_button = QPushButton()
+        self.path_button.setText('Select Recording File')
+        self.path_button.clicked.connect(set_recording_file)
+        main_layout.addWidget(self.path_button)
 
         self.recordings_file_label = QLabel()
         self.recordings_file_label.setAlignment(Qt.AlignCenter)
@@ -221,7 +259,7 @@ class GUI(QWidget):
 
         self.playback_button_label = QLabel()
         self.playback_button_label.setAlignment(Qt.AlignCenter)
-        self.playback_button_label.setText('Playback button: \n ---')
+        self.playback_button_label.setText('Playback Button: \n ---')
         main_layout.addWidget(self.playback_button_label)
 
         self.active_side_label = QLabel()
@@ -243,7 +281,6 @@ class GUI(QWidget):
         self.text_edit = TextEdit()
         self.text_edit.setReadOnly(True)
         self.text_edit.setMinimumWidth(500)
-        self.text_edit.width
 
         h_layout.addWidget(self.text_edit)
 
@@ -267,7 +304,7 @@ class GUI(QWidget):
                 temp = eddiebot.recordings_file
                 eddiebot.recordings_file = file_path
                 if eddiebot.load_recordings():
-                    self.recordings_file_label.setText('Active recording file: \n' + eddiebot.recordings_file)
+                    self.recordings_file_label.setText('Active Recording File: \n' + eddiebot.recordings_file)
                 else:
                     eddiebot.recordings_file = temp
             event.accept()
@@ -277,7 +314,6 @@ class GUI(QWidget):
 
 if __name__ == "__main__":
     # redirect stdout https://gist.github.com/rbonvall/9982648
-    eddiebot.vcontroller.connect()
     app = QApplication(sys.argv)
     w = GUI()
     writer = Writer(w.text_edit)
@@ -289,6 +325,7 @@ if __name__ == "__main__":
         my_gamepad_thread = XInput.GamepadThread(my_handler)
     else:
         print('No XInput controller detected', file=writer)
+    eddiebot.vcontroller.connect()
     w.show()
     with Listener(on_press=on_press) as listener:
         app.exec_()
