@@ -304,6 +304,7 @@ def parse_recordings() -> bool:
 def load_recordings():
     global sequences
     global weights
+    global resets
     if not load_config():
         print('Failed to load recordings from', recordings_file, file=writer)
         return False
@@ -357,6 +358,8 @@ def load_recordings():
             sequences[i][j] = string_to_frames(sequences[i][j])
     f.close()
     print("loaded recordings from", recordings_file, file=writer)
+    resets += 1
+    print('Eddie is ready ('+str(resets)+')', file=writer)
     return True
 
 
@@ -394,10 +397,5 @@ def load_config():
 
 
 def reset():
-    global resets
     load_recordings()
-    resets += 1
-    print('Eddie is ready ('+str(resets)+')', file=writer)
-
-
 

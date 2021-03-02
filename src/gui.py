@@ -1,7 +1,8 @@
+from PyQt5 import QtGui
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPlainTextEdit, QTextEdit, QHBoxLayout, \
     QPushButton, QFileDialog
 from PyQt5.QtCore import Qt, QObject, pyqtSignal, QRunnable, pyqtSlot, QThreadPool, QProcess
-from PyQt5.QtGui import QPixmap, QTextCursor, QFont
+from PyQt5.QtGui import QPixmap, QTextCursor, QFont, QColor
 from pynput.keyboard import Listener
 import XInput
 import sys
@@ -198,10 +199,9 @@ def get_file():
 class DropFileLabel(QLabel):
     def __init__(self):
         super().__init__()
-
         #self.setAlignment(Qt.AlignCenter)
         self.setFont(QFont("Consolas", 11, QFont.Bold))
-        self.setText('\n\nDrop a Recording File Here \n\n' + HOTKEYS_TEXT)
+        self.setText('\n\n\t\t   Drop a Recording File Here \n\n' + HOTKEYS_TEXT)
         self.setStyleSheet('''
             QLabel{
                 border: 4px dashed #aaa
@@ -235,6 +235,8 @@ class GUI(QWidget):
         self.resize(1030, 500)
         self.setAcceptDrops(True)
         self.setWindowTitle('EddieBot')
+        self.setWindowIcon(QtGui.QIcon('icon.png'))
+        self.setStyleSheet("QWidget { background-color : rgb(54, 57, 63); color : rgb(220, 221, 222); }")
         h_layout = QHBoxLayout()
         main_layout = QVBoxLayout()
         h_layout.addLayout(main_layout)
@@ -253,34 +255,30 @@ class GUI(QWidget):
         main_layout.addWidget(self.path_button)
 
         self.recordings_file_label = QLabel()
-        self.recordings_file_label.setAlignment(Qt.AlignCenter)
         self.recordings_file_label.setText('Active Recording File: \n ---')
         main_layout.addWidget(self.recordings_file_label)
 
         self.playback_button_label = QLabel()
-        self.playback_button_label.setAlignment(Qt.AlignCenter)
         self.playback_button_label.setText('Playback Button: \n ---')
         main_layout.addWidget(self.playback_button_label)
 
         self.active_side_label = QLabel()
-        self.active_side_label.setAlignment(Qt.AlignCenter)
         self.active_side_label.setText('Active Side: ' +
                                        sides_representation[eddiebot.direction_map_index])
         main_layout.addWidget(self.active_side_label)
 
         self.num_repetitions_label = QLabel()
-        self.num_repetitions_label.setAlignment(Qt.AlignCenter)
         self.num_repetitions_label.setText('Number of Repetitions: ' + str(eddiebot.repetitions))
         main_layout.addWidget(self.num_repetitions_label)
 
         self.mute_label = QLabel()
-        self.mute_label.setAlignment(Qt.AlignCenter)
         self.mute_label.setText('Mute Start/End Sequence Sound: ' + on_off_map[eddiebot.mute])
         main_layout.addWidget(self.mute_label)
 
         self.text_edit = TextEdit()
         self.text_edit.setReadOnly(True)
         self.text_edit.setMinimumWidth(500)
+        self.text_edit.setStyleSheet("background-color: rgb(0, 0, 0); color: rgb(255, 255, 255);")
 
         h_layout.addWidget(self.text_edit)
 
