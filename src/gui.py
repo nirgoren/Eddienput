@@ -2,7 +2,7 @@ from PyQt5 import QtGui
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPlainTextEdit, QTextEdit, QHBoxLayout, \
     QPushButton, QFileDialog
 from PyQt5.QtCore import Qt, QObject, pyqtSignal, QRunnable, pyqtSlot, QThreadPool, QProcess
-from PyQt5.QtGui import QPixmap, QTextCursor, QFont, QColor
+from PyQt5.QtGui import QPixmap, QTextCursor, QFont, QColor, QTextCharFormat, QBrush
 from pynput.keyboard import Listener
 import XInput
 import sys
@@ -49,7 +49,7 @@ Press Start on P2 Controller            Home Key
 Press Select on P2 Controller           End Key
 Toggle Manual P2 Control (for Mapping)  Insert Key
 Map Play Button                         Ctrl+D
-Play Sequence                           Ctrl+P or Mapped Button
+Play Sequence                           Ctrl+P / Custom
 Stop Sequence                           Ctrl+X 
 Toggle Sequence Start/End Sound         Ctrl+M \n\n'''
 
@@ -201,38 +201,53 @@ class DropFileLabel(QLabel):
         super().__init__()
         #self.setAlignment(Qt.AlignCenter)
         self.setFont(QFont("Consolas", 11, QFont.Bold))
-        self.setText('\n\n\t\t   Drop a Recording File Here \n\n' + HOTKEYS_TEXT)
+        self.setText('\n\n\t      Drop a Recording File Here \n\n' + HOTKEYS_TEXT)
         self.setStyleSheet('''
             QLabel{
-                border: 4px dashed #aaa
+                border: 3px dashed #aaa
             }
         ''')
 
 
 class TextEdit(QTextEdit):
+    color = QBrush(QColor('white'))
+
+    def set_color(self, color):
+        self.color = QBrush(QColor(color))
+
     def append_text(self, string):
         super().moveCursor(QTextCursor.End)
-        super().insertPlainText(string)
+        cursor = QTextCursor(super().textCursor())
+
+        format_ = QTextCharFormat()
+        format_.setForeground(QBrush(QColor(self.color)))
+        cursor.setCharFormat(format_)
+        cursor.insertText(string)
 
 
 class Writer(QObject):
     append_text_signal = pyqtSignal(str)
+    change_color_signal = pyqtSignal(str)
 
     def __init__(self, text_edit: TextEdit):
         super(Writer, self).__init__()
         self.text_edit = text_edit
         self.append_text_signal.connect(text_edit.append_text)
+        self.change_color_signal.connect(text_edit.set_color)
 
     def write(self, string):
         print(string, end='')
         self.append_text_signal.emit(string)
+
+    def set_color(self, color):
+        self.change_color_signal.emit(color)
 
 
 class GUI(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.resize(1030, 500)
+        self.resize(1060, 500)
         self.setAcceptDrops(True)
         self.setWindowTitle('EddieBot')
         self.setWindowIcon(QtGui.QIcon('icon.png'))
@@ -246,12 +261,13 @@ class GUI(QWidget):
         # main_layout.addWidget(self.path_box)
 
         self.drop_file_label = DropFileLabel()
-        self.drop_file_label.setMinimumWidth(530)
+        self.drop_file_label.setMinimumWidth(460)
         main_layout.addWidget(self.drop_file_label)
 
         self.path_button = QPushButton()
         self.path_button.setText('Select Recording File')
         self.path_button.clicked.connect(set_recording_file)
+        self.path_button.setStyleSheet("QPushButton { background-color : rgb(44, 47, 53); color : rgb(220, 221, 222); }")
         main_layout.addWidget(self.path_button)
 
         self.recordings_file_label = QLabel()
@@ -311,7 +327,6 @@ class GUI(QWidget):
 
 
 if __name__ == "__main__":
-    # redirect stdout https://gist.github.com/rbonvall/9982648
     app = QApplication(sys.argv)
     w = GUI()
     writer = Writer(w.text_edit)

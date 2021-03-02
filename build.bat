@@ -8,6 +8,7 @@ copy C:\dev\eddiebot\vcontroller\x64\Release\vcontroller.dll dist\eddiebot\vcont
 copy src\beep.wav dist\eddiebot\beep.wav
 copy src\boop.wav dist\eddiebot\boop.wav
 copy src\boop_low.wav dist\eddiebot\boop_low.wav
+copy src\icon.png dist\eddiebot\icon.png
 copy src\recordings.txt dist\eddiebot\recordings.txt
 copy README.md dist\eddiebot\readme.txt
 copy src\gg.json dist\eddiebot\gg.json

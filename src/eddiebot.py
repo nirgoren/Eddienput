@@ -89,9 +89,8 @@ def tap_button(button, value=1):
     vcontroller.set_state(controller_state)
     clock.reset()
     # wait a bit to make sure the button is registered (for emulators etc)
-    clock.sleep()
-    clock.sleep()
-    clock.sleep()
+    for _ in range(3):
+        clock.sleep()
     release_all()
 
 
@@ -305,12 +304,16 @@ def load_recordings():
     global sequences
     global weights
     global resets
+    writer.set_color('red')
     if not load_config():
         print('Failed to load recordings from', recordings_file, file=writer)
+        writer.set_color('white')
         return False
     if not parse_recordings():
         print('Failed to load recordings from', recordings_file, file=writer)
+        writer.set_color('white')
         return False
+    writer.set_color('white')
     # sequences[i][j] is the j'th option of the i'th part of the whole sequences
     sequences = []
     weights = []
@@ -357,9 +360,11 @@ def load_recordings():
         for j in range(len(sequences[i])):
             sequences[i][j] = string_to_frames(sequences[i][j])
     f.close()
-    print("loaded recordings from", recordings_file, file=writer)
+    writer.set_color('green')
+    print("Loaded recordings from", recordings_file, file=writer)
     resets += 1
     print('Eddie is ready ('+str(resets)+')', file=writer)
+    writer.set_color('white')
     return True
 
 
@@ -392,7 +397,7 @@ def load_config():
     symbols_map = direction_maps[direction_map_index]
     symbols_map.update(config["Symbols"])
     macros_map = config["Macros"]
-    print("Loaded config from", config_file, file=writer)
+    print("Loaded config from", config_file)
     return True
 
 
