@@ -3,7 +3,8 @@ Prerequisites:
 Install ViGEmBusSetup_x64.msi  
 
 Symbols:  
-You can use differents symbols, reassign symbols to other buttons, and set up macros in config.json  
+You can define symbols, reassign symbols to other buttons, and set up macros in a JSON config file.  
+The first line of a recordings file should be the location of the config file to be used.
 
 Reserved symbols:  
 W[*number*], +, startmix, option, endmix, [, ]
