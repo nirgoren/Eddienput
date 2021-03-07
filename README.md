@@ -31,15 +31,15 @@ there's no need to release in between.
 (For example, if you want to go from down to forwards, just do [2] W10 [6], instead of [2] W10 ]2[+[6])
 
 Hotkeys:
-* Player 1 Side                           F1
-* Player 2 Side                           F2
-* Play Sequence                           F3 / Custom
-* Stop Sequence                           F4
-* Reload Script                           F5
-* Decrease Number of Repetitions          F6
-* Increase Number of Repetitions          F7
-* Toggle Sequence Start/End Sound         F8
-* Map Play Button                         F9
-* Press Start on P2 Controller            Home Key
-* Press Select on P2 Controller           End Key
-* Toggle Manual P2 Control (for Mapping)  Insert Key
+* Player 1 Side                          - F1
+* Player 2 Side                          - F2
+* Play Sequence                          - F3 / Custom
+* Stop Sequence                          - F4
+* Reload Script                          - F5
+* Decrease Number of Repetitions         - F6
+* Increase Number of Repetitions         - F7
+* Toggle Sequence Start/End Sound        - F8
+* Map Play Button                        - F9
+* Press Start on P2 Controller           - Home Key
+* Press Select on P2 Controller          - End Key
+* Toggle Manual P2 Control (for Mapping) - Insert Key
