@@ -43,8 +43,12 @@ class State:
         self.RT_value = 0x00
 
 
-def connect():
-    return _vcontroller.connect()
+def connect(use_dinput=False):
+    if use_dinput:
+        print('Using DirectInput emulation')
+    else:
+        print('Using XInput emulation')
+    return _vcontroller.connect(use_dinput)
 
 
 def set_state(state):

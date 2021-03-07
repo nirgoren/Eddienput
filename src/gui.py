@@ -40,18 +40,18 @@ HOTKEYS_TEXT =\
     '''
 Hotkeys:
   
-Reload Script                           Ctrl+R
-Player 1 Side                           Ctrl+1
-Player 2 Side                           Ctrl+2
-Increase Number of Repetitions          Ctrl+"="
-Decrease Number of Repetitions          Ctrl+"-"
+Player 1 Side                           F1
+Player 2 Side                           F2
+Play Sequence                           F3 / Custom
+Stop Sequence                           F4
+Reload Script                           F5
+Decrease Number of Repetitions          F6
+Increase Number of Repetitions          F7
+Toggle Sequence Start/End Sound         F8
+Map Play Button                         F9
 Press Start on P2 Controller            Home Key
 Press Select on P2 Controller           End Key
-Toggle Manual P2 Control (for Mapping)  Insert Key
-Map Play Button                         Ctrl+D
-Play Sequence                           Ctrl+P / Custom
-Stop Sequence                           Ctrl+X 
-Toggle Sequence Start/End Sound         Ctrl+M \n\n'''
+Toggle Manual P2 Control (for Mapping)  Insert Key \n\n'''
 
 XInput.get_connected()
 LT_VALUE = -1
@@ -65,7 +65,7 @@ def on_press(key):
     global activation_key
     key_val = str(key)
     #print("received", key_val)
-    if key_val == r"'\x18'":  # ctrl+x
+    if key_val == "Key.f4":  # F4
         eddiebot.playing = False
     elif eddiebot.playing:
         return
@@ -79,29 +79,29 @@ def on_press(key):
         eddiebot.threadpool.start(worker)
         return
     if eddiebot.recordings_file:
-        if key_val == r"'\x12'":  # ctrl+r
+        if key_val == "Key.f5":  # F5
             print("Reloading script", file=writer)
             eddiebot.reset()
-        if key_val == r"<49>":  # ctrl+1
+        if key_val == "Key.f1":  # F1
             eddiebot.direction_map_index = 0
             print("Switching to " + sides_representation[0] + " side", file=writer)
             w.active_side_label.setText('Active side: ' +
                                         sides_representation[0])
             eddiebot.reset()
-        if key_val == r"<50>":  # ctrl+2
+        if key_val == "Key.f2":  # F2
             eddiebot.direction_map_index = 1
-            eddiebot.reset()
             print("Switching to " + sides_representation[1] + " side", file=writer)
             w.active_side_label.setText('Active side: ' +
                                         sides_representation[1])
-        if key_val == r"'\x10'":  # ctrl+p
+            eddiebot.reset()
+        if key_val == "Key.f3":  # F3
             worker = Worker(eddiebot.run_scenario)
             eddiebot.threadpool.start(worker)
-    if key_val == r"<189>":  # '-'
+    if key_val == "Key.f6":  # F6
         eddiebot.repetitions = max(1, eddiebot.repetitions - 1)
         print("Number of repetitions set to", eddiebot.repetitions, file=writer)
         w.num_repetitions_label.setText('Number of repetitions: ' + str(eddiebot.repetitions))
-    if key_val == r"<187>":  # '='
+    if key_val == "Key.f7":  # F7
         eddiebot.repetitions = min(100, eddiebot.repetitions + 1)
         print("Number of repetitions set to", eddiebot.repetitions, file=writer)
         w.num_repetitions_label.setText('Number of repetitions: ' + str(eddiebot.repetitions))
@@ -109,10 +109,10 @@ def on_press(key):
         eddiebot.tap_button('BtnStart', 1)
     if key_val == "Key.end":  # end
         eddiebot.tap_button('BtnBack', 1)
-    if key_val == r"'\r'":  # ctrl+m
+    if key_val == "Key.f8":  # F8
         eddiebot.toggle_mute()
         w.mute_label.setText('Mute Start/End Sequence Sound: ' + on_off_map[eddiebot.mute])
-    if key_val == r"'\x04'":  # ctrl+d
+    if key_val == "Key.f9":  # F9
         activation_key = None
         capture_activation_key = True
         print("Capturing playback button...", file=writer)
@@ -250,7 +250,7 @@ class GUI(QWidget):
         self.resize(1060, 500)
         self.setAcceptDrops(True)
         self.setWindowTitle('EddieBot')
-        self.setWindowIcon(QtGui.QIcon('icon.png'))
+        self.setWindowIcon(QtGui.QIcon('icon.ico'))
         self.setStyleSheet("QWidget { background-color : rgb(54, 57, 63); color : rgb(220, 221, 222); }")
         h_layout = QHBoxLayout()
         main_layout = QVBoxLayout()
@@ -338,7 +338,7 @@ if __name__ == "__main__":
         my_gamepad_thread = XInput.GamepadThread(my_handler)
     else:
         print('No XInput controller detected', file=writer)
-    eddiebot.vcontroller.connect()
+    eddiebot.vcontroller.connect(True)
     w.show()
     with Listener(on_press=on_press) as listener:
         app.exec_()

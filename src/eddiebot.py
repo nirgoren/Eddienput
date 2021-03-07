@@ -18,6 +18,7 @@ MIX_START = 'startmix'
 OPTION = 'option'
 MIX_END = 'endmix'
 FPS_DEFAULT = 60
+EMPTY_PREFIX_FRAMES = 60
 REPETITIONS_DEFAULT = 1
 DIRECTION_MAP_INDEX_DEFAULT = 1  # default to P2 side
 
@@ -199,6 +200,10 @@ def run_scenario():
     global playing
     playing = True
     buttons_queue = []
+
+    # set scenario prefix
+    buttons_queue.extend([[]]*EMPTY_PREFIX_FRAMES)
+
     for _ in range(repetitions):
         for i, recordings in enumerate(sequences):
             if len(recordings) != 0:
@@ -314,14 +319,16 @@ def load_recordings():
         writer.set_color('white')
         return False
     writer.set_color('white')
+
     # sequences[i][j] is the j'th option of the i'th part of the whole sequences
     sequences = []
     weights = []
     f = open(recordings_file, 'r')
     i = 0
     j = 0
+
     for line_number, line in enumerate(f):
-        if line_number == 0:  # skip first line (config file)
+        if line_number == 0:  # skip first line (config file location)
             continue
         line = line.strip()
         # ignore empty lines

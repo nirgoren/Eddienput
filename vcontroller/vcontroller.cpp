@@ -39,12 +39,14 @@ SOFTWARE.
 // The ViGEm API
 //
 #include <ViGEm/Client.h>
+#include <ViGEm/Util.h>
 
 //
 // Link against SetupAPI
 //
 #pragma comment(lib, "setupapi.lib")
 
+static bool DINPUT = false;
 static PVIGEM_CLIENT client;
 static PVIGEM_TARGET pad;
 static XINPUT_GAMEPAD state = {};
@@ -52,13 +54,13 @@ static XINPUT_GAMEPAD state = {};
 #ifdef __cplusplus
 extern "C" {
 #endif
-  __declspec(dllexport) int connect()
+  __declspec(dllexport) int connect(bool use_dinput)
   {
     client = vigem_alloc();
 
     if (client == nullptr)
     {
-      std::cerr << "Uh, not enough memory to do that?!" << std::endl;
+      std::cerr << "Failed to allocate client" << std::endl;
       return -1;
     }
 
@@ -73,7 +75,11 @@ extern "C" {
     //
     // Allocate handle to identify new pad
     //
-    pad = vigem_target_x360_alloc();
+    DINPUT = use_dinput;
+    if (DINPUT)
+      pad = vigem_target_ds4_alloc();
+    else
+      pad = vigem_target_x360_alloc();
 
     //
     // Add client to the bus, this equals a plug-in event
@@ -104,13 +110,23 @@ extern "C" {
     // The XINPUT_GAMEPAD structure is identical to the XUSB_REPORT structure
     // so we can simply take it "as-is" and cast it.
     //
-    // Call this function on every input state change e.g. in a loop polling
-    // another joystick or network device or thermometer or... you get the idea.
-    //
       state.wButtons = buttons_value;
       state.bLeftTrigger = LT_value;
       state.bRightTrigger = RT_value;
-      vigem_target_x360_update(client, pad, *reinterpret_cast<XUSB_REPORT*>(&state));
+      if (DINPUT)
+      {
+        DS4_REPORT rep;
+        DS4_REPORT_INIT(&rep);
+
+        // The DualShock 4 expects a different report format, so we call a helper 
+        // function which will translate buttons and axes 1:1 from XUSB to DS4
+        // format and submit it to the update function afterwards.
+        XUSB_TO_DS4_REPORT(reinterpret_cast<PXUSB_REPORT>(&state), &rep);
+
+        vigem_target_ds4_update(client, pad, rep);
+      }
+      else
+        vigem_target_x360_update(client, pad, *reinterpret_cast<XUSB_REPORT*>(&state));
       
     return 0;
   }
