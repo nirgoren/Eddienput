@@ -5,6 +5,7 @@ import time
 import random
 import json
 import vcontroller
+import key_emulation
 import winsound
 import re
 
@@ -76,7 +77,10 @@ def play_sound_async(sound):
 
 def set_button_value(button, value):
     log_queue.append((button, value, time.perf_counter()*60))
-    controller_state.update_state(button, value)
+    if button in key_emulation.key_code_map:
+        key_emulation.update_button_value(button, value)
+    else:
+        controller_state.update_state(button, value)
     #print("pressed:", button, value, time.perf_counter()*60)
 
 

@@ -17,8 +17,8 @@ capture_activation_key = None
 sides_representation = ['Player 1', 'Player 2']
 
 on_off_map = {
-    True: 'On',
-    False: 'Off'
+    True: 'Off',
+    False: 'On'
 }
 
 manual_action_map = {
@@ -27,31 +27,31 @@ manual_action_map = {
     'Key.up': ('Dpad', eddiebot.direction_value_map['up']),
     'Key.down': ('Dpad', eddiebot.direction_value_map['down']),
     "'q'": ('BtnShoulderL', 1),
-    "'w'": ('BtnX', 1),
+    "'s'": ('BtnX', 1),
     "'e'": ('BtnY', 1),
     "'r'": ('BtnShoulderR', 1),
     "'a'": ('TriggerL', 1),
-    "'s'": ('BtnA', 1),
+    "'x'": ('BtnA', 1),
     "'d'": ('BtnB', 1),
     "'f'": ('TriggerR', 1)
 }
 
 HOTKEYS_TEXT =\
     '''
-Hotkeys:
+  Hotkeys:
   
-Player 1 Side                           F1
-Player 2 Side                           F2
-Play Sequence                           F3 / Custom
-Stop Sequence                           F4
-Reload Script                           F5
-Decrease Number of Repetitions          F6
-Increase Number of Repetitions          F7
-Toggle Sequence Start/End Sound         F8
-Map Play Button                         F9
-Press Start on P2 Controller            Home Key
-Press Select on P2 Controller           End Key
-Toggle Manual P2 Control (for Mapping)  Insert Key \n\n'''
+  Player 1 Side                           F1
+  Player 2 Side                           F2
+  Play Sequence                           F3 / Custom
+  Stop Sequence                           F4
+  Reload Script                           F5
+  Decrease Number of Repetitions          F6
+  Increase Number of Repetitions          F7
+  Toggle Sequence Start/End Sound         F8
+  Map Play Button                         F9
+  Press Start on P2 Controller            Home Key
+  Press Select on P2 Controller           End Key
+  Toggle Manual P2 Control (for Mapping)  Insert Key \n\n'''
 
 XInput.get_connected()
 LT_VALUE = -1
@@ -111,7 +111,7 @@ def on_press(key):
         eddiebot.tap_button('BtnBack', 1)
     if key_val == "Key.f8":  # F8
         eddiebot.toggle_mute()
-        w.mute_label.setText('Mute Start/End Sequence Sound: ' + on_off_map[eddiebot.mute])
+        w.mute_label.setText('Start/End Sequence Sound: ' + on_off_map[eddiebot.mute])
     if key_val == "Key.f9":  # F9
         activation_key = None
         capture_activation_key = True
@@ -121,7 +121,7 @@ def on_press(key):
         if not manual_mode:
             print('''Manual mode activated
 Please set up player 2 buttons and then deactivate. (Manual mode is not fit for playing)
-Arrow keys=Dpad, Q=LB, A=LT, W=X, S=A, E=Y, D=B, R=RB, F=RT''', file=writer)
+Arrow keys=Dpad, Q=LB, A=LT, S=X, X=A, E=Y, D=B, R=RB, F=RT''', file=writer)
         else:
             print('Manual mode deactivated', file=writer)
         manual_mode = not manual_mode
@@ -247,7 +247,7 @@ class GUI(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.resize(1060, 500)
+        self.resize(1055, 500)
         self.setAcceptDrops(True)
         self.setWindowTitle('EddieBot')
         self.setWindowIcon(QtGui.QIcon('icon.ico'))
@@ -261,7 +261,7 @@ class GUI(QWidget):
         # main_layout.addWidget(self.path_box)
 
         self.drop_file_label = DropFileLabel()
-        self.drop_file_label.setMinimumWidth(460)
+        self.drop_file_label.setMinimumWidth(455)
         main_layout.addWidget(self.drop_file_label)
 
         self.path_button = QPushButton()
@@ -288,7 +288,7 @@ class GUI(QWidget):
         main_layout.addWidget(self.num_repetitions_label)
 
         self.mute_label = QLabel()
-        self.mute_label.setText('Mute Start/End Sequence Sound: ' + on_off_map[eddiebot.mute])
+        self.mute_label.setText('Start/End Sequence Sound: ' + on_off_map[eddiebot.mute])
         main_layout.addWidget(self.mute_label)
 
         self.text_edit = TextEdit()

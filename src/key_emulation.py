@@ -40,16 +40,24 @@ class INPUT(ctypes.Structure):
     _fields_ = (("type",   wintypes.DWORD),
                 ("_input", _INPUT))
 LPINPUT = ctypes.POINTER(INPUT)
+
+
 def press_key(hexKeyCode):
     x = INPUT(type=INPUT_KEYBOARD, ki=KEYBDINPUT(wVk=hexKeyCode))
     user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
+
+
 def release_key(hexKeyCode):
     x = INPUT(type=INPUT_KEYBOARD, ki=KEYBDINPUT(wVk=hexKeyCode, dwFlags=KEYEVENTF_KEYUP))
     user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
 
-def to_key_code(c):
-    keyCode = key_code_map[c]
-    return keyCode
+
+def update_button_value(button, value):
+    if value > 0:
+        press_key(key_code_map[button])
+    else:
+        release_key(key_code_map[button])
+
 
 # https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes?redirectedfrom=MSDN
 key_code_map = {
