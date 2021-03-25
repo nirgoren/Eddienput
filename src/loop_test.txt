@@ -1,0 +1,32 @@
+gg.json
+loop 1
+H W120
+startmix
+	option
+		8
+endmix
+endloop
+
+W120
+
+startmix
+loop 1
+option
+2
+endloop
+endmix
+
+
+W60
+startmix
+option
+	loop 2
+		W60 K
+		W60 S
+	endloop
+option
+	loop 2
+		W60 P
+		W60 S
+	endloop
+endmix

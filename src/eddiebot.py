@@ -18,6 +18,8 @@ COMMENT_SYMBOL = '#'
 MIX_START = 'startmix'
 OPTION = 'option'
 MIX_END = 'endmix'
+LOOP_START = 'loop'
+LOOP_END = 'endloop'
 FPS_DEFAULT = 60
 EMPTY_PREFIX_FRAMES = 60
 REPETITIONS_DEFAULT = 1
@@ -235,11 +237,14 @@ def run_scenario():
 
 
 # Returns true iff the recordings file is valid
+# TODO add more restrictions on loop/endloop
 def parse_recordings() -> bool:
     with open(recordings_file, 'r') as f:
+        mixmode_preloop_status = False
         mix_mode = False
         awaiting_option_declaration = False
         awaiting_option_definition = False
+        loop_mode = False
         for i, line in enumerate(f):
             if i == 0:  # Skip first line (config file)
                 continue
@@ -250,14 +255,38 @@ def parse_recordings() -> bool:
             # ignore comment lines
             elif line.startswith(COMMENT_SYMBOL):
                 pass
-            elif line == 'startmix':
+            elif line.startswith(LOOP_START):
+                if loop_mode:
+                    print('Line', i + 1, ': Entering loop mode while in loop mode', file=writer)
+                    return False
+                else:
+                    loop_mode = True
+                    mixmode_preloop_status = mix_mode
+                    temp = line.split()
+                    if len(temp) != 2:
+                        print('Line', i + 1, ': Invalid loop line', file=writer)
+                        return False
+                    else:
+                        if not (temp[1].isnumeric() and int(temp[1]) > 0):
+                            print('Line', i + 1, ': Invalid loop line, loop count must be a positive integer', file=writer)
+                            return False
+            elif line == LOOP_END:
+                if not loop_mode:
+                    print('Line', i + 1, ': Exiting loop mode while not in loop mode', file=writer)
+                    return False
+                elif not mix_mode == mixmode_preloop_status:
+                    print('Line', i + 1, ': Exiting loop mode with mismatching mix mode', file=writer)
+                    return False
+                else:
+                    loop_mode = False
+            elif line == MIX_START:
                 if not mix_mode:
                     mix_mode = True
                     awaiting_option_declaration = True
                 else:
                     print('Line', i+1, ': Entering mix mode while in mix mode', file=writer)
                     return False
-            elif line.startswith('option'):
+            elif line.startswith(OPTION):
                 if not mix_mode:
                     print('Line', i+1, ': Defining an option while not in mix mode', file=writer)
                     return False
@@ -274,7 +303,7 @@ def parse_recordings() -> bool:
                         return False
                 awaiting_option_declaration = False
                 awaiting_option_definition = True
-            elif line == 'endmix':
+            elif line == MIX_END:
                 if awaiting_option_declaration:
                     print('Line', i + 1, ': Exiting mix mode while expecting option declaration', file=writer)
                     return False
@@ -306,6 +335,9 @@ def parse_recordings() -> bool:
     if mix_mode:
         print('Did not properly exit mix mode', file=writer)
         return False
+    if loop_mode:
+        print('Did not properly exit loop mode', file=writer)
+        return False
     return True
 
 
@@ -330,10 +362,13 @@ def load_recordings():
     f = open(recordings_file, 'r')
     i = 0
     j = 0
-
-    for line_number, line in enumerate(f):
-        if line_number == 0:  # skip first line (config file location)
-            continue
+    loop_iterations = 0
+    loop_counter = 0
+    lines = [line for line in f]
+    line_number = 1  # skip first line (config file location)
+    loop_line_number = 0
+    while line_number < len(lines):
+        line = lines[line_number]
         line = line.strip()
         # ignore empty lines
         if len(line) == 0:
@@ -341,6 +376,17 @@ def load_recordings():
         # ignore comment lines
         elif line.startswith(COMMENT_SYMBOL):
             pass
+        elif line.startswith(LOOP_START):
+            # record loop line, number of iterations, reset loop counter
+            loop_iterations = int(re.findall(r'\d+', line)[0])
+            loop_line_number = line_number
+            loop_counter = 1
+        elif line.startswith(LOOP_END):
+            if loop_counter < loop_iterations:
+                # increase loop counter, go to first line after loop line
+                loop_counter += 1
+                line_number = loop_line_number + 1
+                continue
         elif line.startswith(MIX_START):
             if i < len(sequences):
                 i += 1
@@ -366,6 +412,7 @@ def load_recordings():
                 weights.append([1])
             # append to current recording
             sequences[i][j] = sequences[i][j] + ' ' + line
+        line_number += 1
 
     for i in range(len(sequences)):
         for j in range(len(sequences[i])):

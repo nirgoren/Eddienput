@@ -338,7 +338,7 @@ if __name__ == "__main__":
         my_gamepad_thread = XInput.GamepadThread(my_handler)
     else:
         print('No XInput controller detected', file=writer)
-    eddiebot.vcontroller.connect(True)
+    eddiebot.vcontroller.connect(False)
     w.show()
     with Listener(on_press=on_press) as listener:
         app.exec_()
