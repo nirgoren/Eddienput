@@ -10,8 +10,8 @@ copy src\boop.wav dist\eddiebot\boop.wav
 copy src\boop_low.wav dist\eddiebot\boop_low.wav
 copy src\icon.ico dist\eddiebot\icon.ico
 Xcopy /E /I src\configs dist\eddiebot\configs
-copy src\recordings.txt dist\eddiebot\recordings.txt
-copy README.md dist\eddiebot\readme.txt
+copy src\eddie_mix.txt dist\eddiebot\eddie_mix.txt
 copy src\gg.json dist\eddiebot\gg.json
 copy LICENSE dist\eddiebot\LICENSE
+copy README.md dist\eddiebot\README.md
 PAUSE

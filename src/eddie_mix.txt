@@ -1,4 +1,4 @@
-gg.json
+config\gg.json
 select W7
 #mawaru start
 *236 H W4 [K] W11 ]K[ W20
