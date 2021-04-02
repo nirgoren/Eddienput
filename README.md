@@ -142,7 +142,7 @@ The first line of a recordings file should always be the path (absolute or relat
 </details>
 
 
-#### Supported virtual keyboard buttons to map a symbol to (experimental, may delay player keyboard inputs while playing):
+#### Supported virtual keyboard buttons to map a symbol to (experimental):
 <details>
   <summary>Click to expand</summary>
   
@@ -218,7 +218,13 @@ config\gg.json
 * Inputs are inconsistent when symbols are mapped to a virtual controller. They are more consistent when mapped to keys on the keyboard (use kof_keyboard.json)
 
 #### Guilty Gear Accent Core +R:
-* P2 movement keys not recognized when mapped to keys on the keyboard (use gg.json). If you are a keyboard player, run two instances of the program at the same time so that the second virtual controller will be treated as P2's
+* P2 movement keys not recognized when mapped to keys on the keyboard (use gg.json). If you are a keyboard player, run two instances of the program at the same time (or connect some a real controller if you have one) so that the second virtual controller will be treated as P2's
 
 #### Melty Blood Actress Again Current Code Community Edition:
 * Does not work with cccaster.exe, run with MBAA.exe instead
+
+#### Mapping play button to a controller button
+* Only supported on XInput controllers. If you use a PS4 pad, a possible workaround would be to use DS4Windows
+
+#### Inconsistent inputs:
+* It is recommended to disable Steam's Xbox controller support, as that intoduces input inconsistencies (This most likely applies to XInput controllers in general)
