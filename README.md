@@ -43,7 +43,7 @@ instead of
 * *+* - Add input to the same frame
 * Example:
 ```
-config\gg.json
+configs\gg.json
 # <- Indicates this line is a comment and is ignored by the parser
 # The assumed game for this example is Guilty Gear XRD Rev2
 # The first line (config\gg.json) indicates that we use the symbols and mappings defined in that file (that fit Guilty Gear notation)
@@ -65,7 +65,7 @@ K+P+S+H
 * Nested mixups are not supported
 * Example:
 ```
-config\gg.json
+configs\gg.json
 # Classic Eddie high/low mixup (assuming Guilty Gear Accent Core +R)
 # Fixed Mawaru setup (always performed)
 2 3 6 H W4 [K] W11 ]K[ W20
@@ -91,7 +91,7 @@ endmix
 * Loops can be defined inside mixups as long as the mixup doesn't end inside the loop
 * Nested loops are not supported
 ```
-config\sf.json
+configs\sf.json
 # The assumed game for this example is Street Fighter 5 with Ken as P2
 # Perform heavy tatsu 5 times waiting 180 frames (3 seconds) between each:
 # Indentation is optional (recommended for readability)
@@ -208,7 +208,7 @@ The first line of a recordings file should always be the path (absolute or relat
 * "beep" - Plays a beep sound
 * Example:
 ```
-config\gg.json
+configs\gg.json
 # Assuming Guilty Gear Accent Core +R with Eddie as P2, Perform Eddie's reversal super and beep right when a slashback should be inputted
 6 3 2 1 4 6+H W63 beep
 ```
