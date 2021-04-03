@@ -41,7 +41,7 @@ instead of
 ```[2] W10 ]2[+[6]```)
 * **The above does not hold if the directions are mapped to keyboard keys (experimental)
 * *+* - Add input to the same frame
-* Example:
+#### Example:
 ```
 configs\gg.json
 # <- Indicates this line is a comment and is ignored by the parser
@@ -63,7 +63,7 @@ K+P+S+H
 * Actions in the lines following the option will be performed if the option is chosen
 * Close the mixup definition with a line consisting of the *endmix* keyword
 * Nested mixups are not supported
-* Example:
+#### Example:
 ```
 configs\gg.json
 # Classic Eddie high/low mixup (assuming Guilty Gear Accent Core +R)
@@ -90,6 +90,7 @@ endmix
 * Mixups defined inside a loop must be closed before exiting the loop
 * Loops can be defined inside mixups as long as the mixup doesn't end inside the loop
 * Nested loops are not supported
+#### Example:
 ```
 configs\sf.json
 # The assumed game for this example is Street Fighter 5 with Ken as P2
@@ -206,7 +207,7 @@ The first line of a recordings file should always be the path (absolute or relat
 
 #### Others:
 * "beep" - Plays a beep sound
-* Example:
+#### Example:
 ```
 configs\gg.json
 # Assuming Guilty Gear Accent Core +R with Eddie as P2, Perform Eddie's reversal super and beep right when a slashback should be inputted
