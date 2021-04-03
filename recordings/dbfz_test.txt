@@ -1,0 +1,8 @@
+configs\dbfz.json
+2 3 6 S W60
+L W60
+M W60
+H W60
+S W60
+A1 W60
+A2 W60

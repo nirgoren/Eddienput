@@ -1,0 +1,8 @@
+configs\gg.json
+# Usage: Map the activation key to your D key and knock Sol down with 2D
+W82 
+# Spam DP motion and press/release H every other frame to get a reversal
+6 2 3+H 
+loop 8
+	6+H 2 3+H
+endloop

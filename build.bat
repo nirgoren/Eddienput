@@ -1,17 +1,16 @@
 rmdir /s /q "./build"
 rmdir /s /q "./dist"
-del "./eddiebot.spec"
-pyinstaller src/gui.py --noconsole --icon=src/icon.ico --name eddiebot
-copy ViGEmBusSetup_x64.msi dist\eddiebot\ViGEmBusSetup_x64.msi
-copy src\ViGEmClient.dll dist\eddiebot\ViGEmClient.dll
-copy C:\dev\eddiebot\vcontroller\x64\Release\vcontroller.dll dist\eddiebot\vcontroller.dll
-copy src\beep.wav dist\eddiebot\beep.wav
-copy src\boop.wav dist\eddiebot\boop.wav
-copy src\boop_low.wav dist\eddiebot\boop_low.wav
-copy src\icon.ico dist\eddiebot\icon.ico
-Xcopy /E /I src\configs dist\eddiebot\configs
-copy src\eddie_mix.txt dist\eddiebot\eddie_mix.txt
-copy src\gg.json dist\eddiebot\gg.json
-copy LICENSE dist\eddiebot\LICENSE
-copy README.md dist\eddiebot\README.md
+pyinstaller src/gui.py --noconsole --icon=src/icon.ico --name EddieController
+copy ViGEmBusSetup_x64.msi dist\EddieController\ViGEmBusSetup_x64.msi
+copy src\ViGEmClient.dll dist\EddieController\ViGEmClient.dll
+copy vcontroller\x64\Release\vcontroller.dll dist\EddieController\vcontroller.dll
+copy src\beep.wav dist\EddieController\beep.wav
+copy src\boop.wav dist\EddieController\boop.wav
+copy src\boop_low.wav dist\EddieController\boop_low.wav
+copy src\icon.ico dist\EddieController\icon.ico
+Xcopy /E /I configs dist\EddieController\configs
+Xcopy /E /I recordings dist\EddieController\recordings
+copy LICENSE dist\EddieController\LICENSE
+copy README.md dist\EddieController\README.md
+del "./EddieController.spec"
 PAUSE

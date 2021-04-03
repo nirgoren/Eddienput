@@ -8,7 +8,7 @@ import XInput
 import sys
 import traceback
 from worker import Worker
-import eddiebot
+import eddiecontroller
 
 
 writer = None
@@ -22,10 +22,10 @@ on_off_map = {
 }
 
 manual_action_map = {
-    'Key.left': ('Dpad', eddiebot.direction_value_map['left']),
-    'Key.right': ('Dpad', eddiebot.direction_value_map['right']),
-    'Key.up': ('Dpad', eddiebot.direction_value_map['up']),
-    'Key.down': ('Dpad', eddiebot.direction_value_map['down']),
+    'Key.left': ('Dpad', eddiecontroller.direction_value_map['left']),
+    'Key.right': ('Dpad', eddiecontroller.direction_value_map['right']),
+    'Key.up': ('Dpad', eddiecontroller.direction_value_map['up']),
+    'Key.down': ('Dpad', eddiecontroller.direction_value_map['down']),
     "'q'": ('BtnShoulderL', 1),
     "'s'": ('BtnX', 1),
     "'e'": ('BtnY', 1),
@@ -66,8 +66,8 @@ def on_press(key):
     key_val = str(key)
     #print("received", key_val)
     if key_val == "Key.f4":  # F4
-        eddiebot.playing = False
-    elif eddiebot.playing:
+        eddiecontroller.playing = False
+    elif eddiecontroller.playing:
         return
     if capture_activation_key:
         capture_activation_key = False
@@ -75,43 +75,43 @@ def on_press(key):
         print('Playback button set to', key_val, file=writer)
         w.playback_button_label.setText('Playback button: \n' + activation_key)
     elif key_val == activation_key:
-        worker = Worker(eddiebot.run_scenario)
-        eddiebot.threadpool.start(worker)
+        worker = Worker(eddiecontroller.run_scenario)
+        eddiecontroller.threadpool.start(worker)
         return
-    if eddiebot.recordings_file:
+    if eddiecontroller.recordings_file:
         if key_val == "Key.f5":  # F5
             print("Reloading script", file=writer)
-            eddiebot.reset()
+            eddiecontroller.reset()
         if key_val == "Key.f1":  # F1
-            eddiebot.direction_map_index = 0
+            eddiecontroller.direction_map_index = 0
             print("Switching to " + sides_representation[0] + " side", file=writer)
             w.active_side_label.setText('Active side: ' +
                                         sides_representation[0])
-            eddiebot.reset()
+            eddiecontroller.reset()
         if key_val == "Key.f2":  # F2
-            eddiebot.direction_map_index = 1
+            eddiecontroller.direction_map_index = 1
             print("Switching to " + sides_representation[1] + " side", file=writer)
             w.active_side_label.setText('Active side: ' +
                                         sides_representation[1])
-            eddiebot.reset()
+            eddiecontroller.reset()
         if key_val == "Key.f3":  # F3
-            worker = Worker(eddiebot.run_scenario)
-            eddiebot.threadpool.start(worker)
+            worker = Worker(eddiecontroller.run_scenario)
+            eddiecontroller.threadpool.start(worker)
     if key_val == "Key.f6":  # F6
-        eddiebot.repetitions = max(1, eddiebot.repetitions - 1)
-        print("Number of repetitions set to", eddiebot.repetitions, file=writer)
-        w.num_repetitions_label.setText('Number of repetitions: ' + str(eddiebot.repetitions))
+        eddiecontroller.repetitions = max(1, eddiecontroller.repetitions - 1)
+        print("Number of repetitions set to", eddiecontroller.repetitions, file=writer)
+        w.num_repetitions_label.setText('Number of repetitions: ' + str(eddiecontroller.repetitions))
     if key_val == "Key.f7":  # F7
-        eddiebot.repetitions = min(100, eddiebot.repetitions + 1)
-        print("Number of repetitions set to", eddiebot.repetitions, file=writer)
-        w.num_repetitions_label.setText('Number of repetitions: ' + str(eddiebot.repetitions))
+        eddiecontroller.repetitions = min(100, eddiecontroller.repetitions + 1)
+        print("Number of repetitions set to", eddiecontroller.repetitions, file=writer)
+        w.num_repetitions_label.setText('Number of repetitions: ' + str(eddiecontroller.repetitions))
     if key_val == "Key.home":  # home
-        eddiebot.tap_button('BtnStart', 1)
+        eddiecontroller.tap_button('BtnStart', 1)
     if key_val == "Key.end":  # end
-        eddiebot.tap_button('BtnBack', 1)
+        eddiecontroller.tap_button('BtnBack', 1)
     if key_val == "Key.f8":  # F8
-        eddiebot.toggle_mute()
-        w.mute_label.setText('Start/End Sequence Sound: ' + on_off_map[eddiebot.mute])
+        eddiecontroller.toggle_mute()
+        w.mute_label.setText('Start/End Sequence Sound: ' + on_off_map[eddiecontroller.mute])
     if key_val == "Key.f9":  # F9
         activation_key = None
         capture_activation_key = True
@@ -126,9 +126,9 @@ Arrow keys=Dpad, Q=LB, A=LT, S=X, X=A, E=Y, D=B, R=RB, F=RT''', file=writer)
             print('Manual mode deactivated', file=writer)
         manual_mode = not manual_mode
     # manual control with the keyboard
-    if manual_mode and not eddiebot.playing:
+    if manual_mode and not eddiecontroller.playing:
         if key_val in manual_action_map:
-            eddiebot.tap_button(*manual_action_map[key_val])
+            eddiecontroller.tap_button(*manual_action_map[key_val])
 
 
 class MyHandler(XInput.EventHandler):
@@ -142,9 +142,9 @@ class MyHandler(XInput.EventHandler):
                 print('Playback button set to', event.button, file=writer)
                 w.playback_button_label.setText('Playback button: \n' + event.button)
             elif event.button_id == activation_key:
-                if not eddiebot.playing:
-                    worker = Worker(eddiebot.run_scenario)
-                    eddiebot.threadpool.start(worker)
+                if not eddiecontroller.playing:
+                    worker = Worker(eddiecontroller.run_scenario)
+                    eddiecontroller.threadpool.start(worker)
         pass
 
     def process_trigger_event(self, event):
@@ -158,9 +158,9 @@ class MyHandler(XInput.EventHandler):
                 print('Playback button set to', 'Left Trigger' if LT == 1.0 else 'Right Trigger', file=writer)
                 w.playback_button_label.setText('Playback button: \n' + ('Left Trigger' if LT == 1.0 else 'Right Trigger'))
             elif (LT == 1.0 and activation_key == -1) or (RT == 1.0 and activation_key == -2):
-                if not eddiebot.playing:
-                    worker = Worker(eddiebot.run_scenario)
-                    eddiebot.threadpool.start(worker)
+                if not eddiecontroller.playing:
+                    worker = Worker(eddiecontroller.run_scenario)
+                    eddiecontroller.threadpool.start(worker)
         pass
 
     def process_stick_event(self, event):
@@ -175,16 +175,16 @@ class MyHandler(XInput.EventHandler):
 
 def set_recording_file():
     file_path = get_file()
-    if eddiebot.playing:
+    if eddiecontroller.playing:
         print("Recording currently playing, can't load new recording", file=writer)
         return
     if file_path and file_path.endswith('.txt'):
-        temp = eddiebot.recordings_file
-        eddiebot.recordings_file = file_path
-        if eddiebot.load_recordings():
-            w.recordings_file_label.setText('Active Recording File: \n' + eddiebot.recordings_file)
+        temp = eddiecontroller.recordings_file
+        eddiecontroller.recordings_file = file_path
+        if eddiecontroller.load_recordings():
+            w.recordings_file_label.setText('Active Recording File: \n' + eddiecontroller.recordings_file)
         else:
-            eddiebot.recordings_file = temp
+            eddiecontroller.recordings_file = temp
 
 
 def get_file():
@@ -249,7 +249,7 @@ class GUI(QWidget):
         super().__init__()
         self.resize(1055, 500)
         self.setAcceptDrops(True)
-        self.setWindowTitle('EddieBot')
+        self.setWindowTitle('EddieController')
         self.setWindowIcon(QtGui.QIcon('icon.ico'))
         self.setStyleSheet("QWidget { background-color : rgb(54, 57, 63); color : rgb(220, 221, 222); }")
         h_layout = QHBoxLayout()
@@ -280,15 +280,15 @@ class GUI(QWidget):
 
         self.active_side_label = QLabel()
         self.active_side_label.setText('Active Side: ' +
-                                       sides_representation[eddiebot.direction_map_index])
+                                       sides_representation[eddiecontroller.direction_map_index])
         main_layout.addWidget(self.active_side_label)
 
         self.num_repetitions_label = QLabel()
-        self.num_repetitions_label.setText('Number of Repetitions: ' + str(eddiebot.repetitions))
+        self.num_repetitions_label.setText('Number of Repetitions: ' + str(eddiecontroller.repetitions))
         main_layout.addWidget(self.num_repetitions_label)
 
         self.mute_label = QLabel()
-        self.mute_label.setText('Start/End Sequence Sound: ' + on_off_map[eddiebot.mute])
+        self.mute_label.setText('Start/End Sequence Sound: ' + on_off_map[eddiecontroller.mute])
         main_layout.addWidget(self.mute_label)
 
         self.text_edit = TextEdit()
@@ -308,19 +308,19 @@ class GUI(QWidget):
         event.accept()
 
     def dropEvent(self, event):
-        if eddiebot.playing:
+        if eddiecontroller.playing:
             print("Recording currently playing, can't load new recording", file=writer)
             return
         if event.mimeData().hasText:
             event.setDropAction(Qt.CopyAction)
             file_path: str = event.mimeData().urls()[0].toLocalFile()
             if file_path.endswith('.txt'):
-                temp = eddiebot.recordings_file
-                eddiebot.recordings_file = file_path
-                if eddiebot.load_recordings():
-                    self.recordings_file_label.setText('Active Recording File: \n' + eddiebot.recordings_file)
+                temp = eddiecontroller.recordings_file
+                eddiecontroller.recordings_file = file_path
+                if eddiecontroller.load_recordings():
+                    self.recordings_file_label.setText('Active Recording File: \n' + eddiecontroller.recordings_file)
                 else:
-                    eddiebot.recordings_file = temp
+                    eddiecontroller.recordings_file = temp
             event.accept()
         else:
             event.ignore()
@@ -330,7 +330,7 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     w = GUI()
     writer = Writer(w.text_edit)
-    eddiebot.writer = writer
+    eddiecontroller.writer = writer
     if XInput.get_connected()[0]:
         controller_detected = True
         print('XInput controller detected!', file=writer)
@@ -338,10 +338,10 @@ if __name__ == "__main__":
         my_gamepad_thread = XInput.GamepadThread(my_handler)
     else:
         print('No XInput controller detected', file=writer)
-    eddiebot.vcontroller.connect(False)
+    eddiecontroller.vcontroller.connect(False)
     w.show()
     with Listener(on_press=on_press) as listener:
         app.exec_()
         listener.stop()
-        eddiebot.vcontroller.disconnect()
+        eddiecontroller.vcontroller.disconnect()
         listener.join()

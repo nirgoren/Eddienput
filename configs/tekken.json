@@ -1,0 +1,73 @@
+{
+  "FPS": 60,
+
+  "Symbols": {
+    "LP": "BtnX",
+    "RP": "BtnY",
+    "LK": "BtnA",
+    "RK": "BtnB",
+    "RA": "BtnShoulderR",
+    "select": "BtnBack",
+    "start": "BtnStart",
+    "beep": "beep"
+  },
+
+  "P1_directions": {
+    "d": { "Dpad": "down" },
+    "b": { "Dpad": "left" },
+    "f": { "Dpad": "right" },
+    "u": { "Dpad": "up" },
+    "d/b": { "Dpad": "down_left" },
+    "d/f": { "Dpad": "down_right" },
+    "u/b": { "Dpad": "up_left" },
+    "u/f": { "Dpad": "up_right" },
+    "2": { "Dpad": "down" },
+    "4": { "Dpad": "left" },
+    "6": { "Dpad": "right" },
+    "8": { "Dpad": "up" },
+    "1": { "Dpad": "down_left" },
+    "3": { "Dpad": "down_right" },
+    "7": { "Dpad": "up_left" },
+    "9": { "Dpad": "up_right" }
+  },
+
+  "P2_directions": {
+    "d": { "Dpad": "down" },
+    "b": { "Dpad": "right" },
+    "f": { "Dpad": "left" },
+    "u": { "Dpad": "up" },
+    "d/b": { "Dpad": "down_right" },
+    "d/f": { "Dpad": "down_left" },
+    "u/b": { "Dpad": "up_right" },
+    "u/f": { "Dpad": "up_left" },
+    "2": { "Dpad": "down" },
+    "6": { "Dpad": "left" },
+    "4": { "Dpad": "right" },
+    "8": { "Dpad": "up" },
+    "3": { "Dpad": "down_left" },
+    "1": { "Dpad": "down_right" },
+    "9": { "Dpad": "up_left" },
+    "7": { "Dpad": "up_right" }
+  },
+
+  "Macros": {
+    "5": "]1[",
+    "QCF": "2 3 6",
+    "QCB": "2 1 4",
+    "DP": "6 2 3",
+    "HCF": "4 1 2 3 6",
+    "HCB": "6 3 2 1 4",
+    "*236": "2 3 6",
+    "*214": "2 1 4",
+    "*623": "6 2 3",
+    "*421": "4 2 1",
+    "*426": "4 1 2 3 6",
+    "*624": "6 3 2 1 4",
+    "*6246": "6 3 2 1 4 6",
+    "*236236": "2 3 6 2 3 6",
+    "*214214": "2 1 4 2 1 4",
+    "SELECT": "select",
+    "START": "start",
+    "BEEP": "beep"
+  }
+}

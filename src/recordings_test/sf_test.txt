@@ -1,0 +1,9 @@
+configs\sf.json
+2 3 6 LP
+W60
+LK W60
+MK W60
+HK W60
+LP W60
+MP W60
+HP W60

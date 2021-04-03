@@ -1,0 +1,7 @@
+configs\tekken.json
+4 W1 4 W60
+LP W60
+RP W60
+LK W60
+RK W60
+RA W60

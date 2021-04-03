@@ -1,0 +1,2 @@
+configs\gg.json
+6 3 2 1 4 6+H W63 beep
