@@ -11,7 +11,7 @@ The most common usage scenario would be to define recordings/mixups in a recordi
 3. Now go into training mode in your game and select "controller" as the dummy action. If asked by the game to press start on P2 controller, press the "home" key on your keyboard to simulate pressing start on the virtual controller (required in some games) 
 4. You can now press F3 on your keyboard or a mapped button on your controller to play the recording by simulating button presses on P2 controller
 
-You can also share your recording files with other players in your community in order to share combos, mixups and more.
+You can also share your recording files with other players in your community in order to share combos, mixups and more. You can find some example recording files in the recordings folder.
 
 ### Hotkeys:
 * Player 1 Side                          - F1
@@ -103,8 +103,8 @@ endloop
 6 2 3+MP+HP
 ```
 
-## Symbols:  
-You can define symbols, reassign symbols to other buttons, and set up macros in a JSON config file (see gg.json for an example).  
+## Config files:  
+You can define symbols, reassign symbols to other buttons, and set up macros in a JSON config file (see configs\gg.json for an example).  
 The first line of a recordings file should always be the path (absolute or relative) to the config file to be used.
 
 #### Reserved symbols:  
