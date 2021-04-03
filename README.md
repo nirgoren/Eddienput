@@ -1,12 +1,12 @@
-# EddieBot
-EddieBot is a programmable virtual controller mainly aimed at enhancing training mode for all fighting games on PC. 
+# EddieController
+EddieController is a programmable virtual controller mainly aimed at enhancing training mode for all fighting games on PC. 
 
 ## Prerequisites:  
 Install ViGEmBusSetup_x64.msi (provided with the program)
 
 ## Usage:
 The most common usage scenario would be to define recordings/mixups in a recording file, load the file and play the recording. You can do so by following these steps:
-1. Start the eddiebot.exe with your own controller already connected (a second virtual controller should be connected as the program starts)
+1. Start eddiecontroller.exe with your own controller already connected (a second virtual controller should be connected as the program starts)
 2. Define recordings/mixups in a recording file (txt format) according to the syntax described below, save it and load the recording file into the program (drag and drop)
 3. Now go into training mode in your game and select "controller" as the dummy action. If asked by the game to press start on P2 controller, press the "home" key on your keyboard to simulate pressing start on the virtual controller (required in some games) 
 4. You can now press F3 on your keyboard or a mapped button on your controller to play the recording by simulating button presses on P2 controller
