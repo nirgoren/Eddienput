@@ -249,7 +249,7 @@ class GUI(QWidget):
         super().__init__()
         self.resize(1055, 500)
         self.setAcceptDrops(True)
-        self.setWindowTitle('EddieController')
+        self.setWindowTitle('Eddieinput')
         self.setWindowIcon(QtGui.QIcon('icon.ico'))
         self.setStyleSheet("QWidget { background-color : rgb(54, 57, 63); color : rgb(220, 221, 222); }")
         h_layout = QHBoxLayout()
