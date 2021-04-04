@@ -1,4 +1,4 @@
-# Eddieinput
+# Eddienput
 Eddienput (pronounced "edd-input") is a programmable virtual controller mainly aimed at enhancing training mode for all fighting games on PC. 
 
 ## Prerequisites:  
