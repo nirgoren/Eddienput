@@ -216,13 +216,16 @@ configs\gg.json
 
 ## Known Issues:
 #### KOF2002 UM:
-* Inputs are inconsistent when symbols are mapped to a virtual controller. They are more consistent when mapped to keys on the keyboard (use kof_keyboard.json)
+* Inputs are inconsistent when symbols are mapped to a virtual controller. They are more consistent when mapped to keys on the keyboard (use configs\kof_keyboard.json)
 
 #### Guilty Gear Accent Core +R:
 * P2 movement keys not recognized when mapped to keys on the keyboard (use gg.json). If you are a keyboard player, run two instances of the program at the same time (or connect some a real controller if you have one) so that the second virtual controller will be treated as P2's
 
 #### Melty Blood Actress Again Current Code Community Edition:
 * Does not work with cccaster.exe, run with MBAA.exe instead
+
+#### Touhou 7.5: Suimusou - Immaterial and Missing Power
+* Mapping to the keyboard arrow keys does not work. Assign the game's movement keys for P2 to some other keys (see configs\iamp_keyboard.json)
 
 #### Mapping play button to a controller button
 * Only supported on XInput controllers. If you use a PS4 pad, a possible workaround would be to use DS4Windows
