@@ -2,7 +2,7 @@ from PyQt5 import QtGui
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPlainTextEdit, QTextEdit, QHBoxLayout, \
     QPushButton, QFileDialog
 from PyQt5.QtCore import Qt, QObject, pyqtSignal, QRunnable, pyqtSlot, QThreadPool, QProcess
-from PyQt5.QtGui import QPixmap, QTextCursor, QFont, QColor, QTextCharFormat, QBrush
+from PyQt5.QtGui import QPixmap, QTextCursor, QFont, QColor, QTextCharFormat, QBrush, QImage
 from pynput.keyboard import Listener
 import XInput
 import sys
@@ -120,10 +120,12 @@ def on_press(key):
         global manual_mode
         if not manual_mode:
             print('''Manual mode activated
-Please set up player 2 buttons and then deactivate. (Manual mode is not fit for playing)
-Arrow keys=Dpad, Q=LB, A=LT, S=X, X=A, E=Y, D=B, R=RB, F=RT''', file=writer)
+Please set up player 2 buttons and then deactivate. (Manual mode is not fit for playing)''', file=writer)
+            w.controller_image.show()
         else:
             print('Manual mode deactivated', file=writer)
+            w.controller_image.hide()
+            w.adjustSize()
         manual_mode = not manual_mode
     # manual control with the keyboard
     if manual_mode and not eddiecontroller.playing:
@@ -247,13 +249,16 @@ class GUI(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.resize(1055, 500)
+        self.resize(905, 500)
+        self.setMinimumWidth(1050)
         self.setAcceptDrops(True)
-        self.setWindowTitle('Eddieinput')
+        self.setWindowTitle('Eddienput')
         self.setWindowIcon(QtGui.QIcon('icon.ico'))
         self.setStyleSheet("QWidget { background-color : rgb(54, 57, 63); color : rgb(220, 221, 222); }")
+        v_layout = QVBoxLayout()
         h_layout = QHBoxLayout()
         main_layout = QVBoxLayout()
+        v_layout.addLayout(h_layout)
         h_layout.addLayout(main_layout)
 
         # self.path_box = QTextEdit()
@@ -293,12 +298,16 @@ class GUI(QWidget):
 
         self.text_edit = TextEdit()
         self.text_edit.setReadOnly(True)
-        self.text_edit.setMinimumWidth(500)
+        self.text_edit.setMinimumWidth(450)
         self.text_edit.setStyleSheet("background-color: rgb(0, 0, 0); color: rgb(255, 255, 255);")
-
         h_layout.addWidget(self.text_edit)
 
-        self.setLayout(h_layout)
+        self.controller_image = QLabel()
+        self.controller_image.setPixmap(QPixmap('eddieinput_controller.png').scaledToWidth(910))
+        self.controller_image.hide()
+        v_layout.addWidget(self.controller_image)
+
+        self.setLayout(v_layout)
         self.process = QProcess(self)
 
     def dragEnterEvent(self, event):
