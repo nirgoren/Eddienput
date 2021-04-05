@@ -8,6 +8,7 @@ copy src\beep.wav dist\Eddienput\beep.wav
 copy src\boop.wav dist\Eddienput\boop.wav
 copy src\boop_low.wav dist\Eddienput\boop_low.wav
 copy src\icon.ico dist\Eddienput\icon.ico
+copy src\eddienput_controller.png dist\Eddienput\eddienput_controller.png
 Xcopy /E /I configs dist\Eddienput\configs
 Xcopy /E /I recordings dist\Eddienput\recordings
 copy LICENSE dist\Eddienput\LICENSE

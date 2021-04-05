@@ -303,7 +303,7 @@ class GUI(QWidget):
         h_layout.addWidget(self.text_edit)
 
         self.controller_image = QLabel()
-        self.controller_image.setPixmap(QPixmap('eddieinput_controller.png').scaledToWidth(910))
+        self.controller_image.setPixmap(QPixmap('eddienput_controller.png').scaledToWidth(910))
         self.controller_image.hide()
         v_layout.addWidget(self.controller_image)
 
