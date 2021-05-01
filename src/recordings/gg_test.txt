@@ -1,5 +1,5 @@
 configs\gg.json
-2 3 6 P W60
+8 W100
 P W60
 K W60
 S W60

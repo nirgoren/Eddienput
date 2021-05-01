@@ -1,3 +1,5 @@
+import json
+
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPlainTextEdit, QTextEdit, QHBoxLayout, \
     QPushButton, QFileDialog
@@ -11,6 +13,7 @@ from worker import Worker
 import eddiecontroller
 
 
+CONFIG_FILE = './config.json'
 writer = None
 controller_detected = False
 capture_activation_key = None
@@ -39,7 +42,7 @@ manual_action_map = {
 HOTKEYS_TEXT =\
     '''
   Hotkeys:
-  
+
   Player 1 Side                           F1
   Player 2 Side                           F2
   Play Sequence                           F3 / Custom
@@ -53,16 +56,58 @@ HOTKEYS_TEXT =\
   Press Select on P2 Controller           End Key
   Toggle Manual P2 Control (for Mapping)  Insert Key \n\n'''
 
-XInput.get_connected()
+# XInput.get_connected()
 LT_VALUE = -1
 RT_VALUE = -2
 activation_key = None
 manual_mode = False
+listen_to_hotkeys = True
+
+def load_config():
+    try:
+        f = open(CONFIG_FILE, 'r')
+        config = json.load(f)
+        if 'default_recording' in config:
+            default_rec = config['default_recording'].lower()
+            eddiecontroller.recordings_file = default_rec
+            set_recording_file(default_rec)
+        if 'side' in config:
+            side = config['side'].lower()
+            if side == 'p1':
+                set_side(0)
+        if 'rec_start_end_sound' in config:
+            sound = config['rec_start_end_sound'].lower()
+            if sound == 'false':
+                eddiecontroller.toggle_mute()
+    except IOError as e:
+        print('Failed to open config file:', e, file=writer)
+
+
+# 0 for left side, 1 for right side
+def set_side(side: int):
+    eddiecontroller.direction_map_index = side
+    print("Switching to " + sides_representation[side] + " side", file=writer)
+    w.active_side_label.setText('Active side: ' +
+                                sides_representation[side])
+    eddiecontroller.reset()
+
+
+def set_repetitions(reps: int):
+    eddiecontroller.repetitions = reps
+    print("Number of repetitions set to", eddiecontroller.repetitions, file=writer)
+    w.num_repetitions_label.setText('Number of repetitions: ' + str(eddiecontroller.repetitions))
+
+
+def toggle_suppress_hotkeys():
+    global listen_to_hotkeys
+    listen_to_hotkeys = not listen_to_hotkeys
 
 
 def on_press(key):
     global capture_activation_key
     global activation_key
+    if not listen_to_hotkeys:
+        return
     key_val = str(key)
     #print("received", key_val)
     if key_val == "Key.f4":  # F4
@@ -83,28 +128,16 @@ def on_press(key):
             print("Reloading script", file=writer)
             eddiecontroller.reset()
         if key_val == "Key.f1":  # F1
-            eddiecontroller.direction_map_index = 0
-            print("Switching to " + sides_representation[0] + " side", file=writer)
-            w.active_side_label.setText('Active side: ' +
-                                        sides_representation[0])
-            eddiecontroller.reset()
+            set_side(0)
         if key_val == "Key.f2":  # F2
-            eddiecontroller.direction_map_index = 1
-            print("Switching to " + sides_representation[1] + " side", file=writer)
-            w.active_side_label.setText('Active side: ' +
-                                        sides_representation[1])
-            eddiecontroller.reset()
+            set_side(1)
         if key_val == "Key.f3":  # F3
             worker = Worker(eddiecontroller.run_scenario)
             eddiecontroller.threadpool.start(worker)
     if key_val == "Key.f6":  # F6
-        eddiecontroller.repetitions = max(1, eddiecontroller.repetitions - 1)
-        print("Number of repetitions set to", eddiecontroller.repetitions, file=writer)
-        w.num_repetitions_label.setText('Number of repetitions: ' + str(eddiecontroller.repetitions))
+        set_repetitions(max(1, eddiecontroller.repetitions - 1))
     if key_val == "Key.f7":  # F7
-        eddiecontroller.repetitions = min(100, eddiecontroller.repetitions + 1)
-        print("Number of repetitions set to", eddiecontroller.repetitions, file=writer)
-        w.num_repetitions_label.setText('Number of repetitions: ' + str(eddiecontroller.repetitions))
+        set_repetitions(min(100, eddiecontroller.repetitions + 1))
     if key_val == "Key.home":  # home
         eddiecontroller.tap_button('BtnStart', 1)
     if key_val == "Key.end":  # end
@@ -115,12 +148,11 @@ def on_press(key):
     if key_val == "Key.f9":  # F9
         activation_key = None
         capture_activation_key = True
-        print("Capturing playback button...", file=writer)
+        print('Capturing playback button...', file=writer)
     if key_val == "Key.insert":  # insert
         global manual_mode
         if not manual_mode:
-            print('''Manual mode activated
-Please set up player 2 buttons and then deactivate. (Manual mode is not fit for playing)''', file=writer)
+            print('Manual mode activated (Manual mode is not fit for playing)', file=writer)
             w.controller_image.show()
         else:
             print('Manual mode deactivated', file=writer)
@@ -143,7 +175,7 @@ class MyHandler(XInput.EventHandler):
                 activation_key = event.button_id
                 print('Playback button set to', event.button, file=writer)
                 w.playback_button_label.setText('Playback button: \n' + event.button)
-            elif event.button_id == activation_key:
+            elif event.button_id == activation_key and eddiecontroller.recordings_file:
                 if not eddiecontroller.playing:
                     worker = Worker(eddiecontroller.run_scenario)
                     eddiecontroller.threadpool.start(worker)
@@ -172,11 +204,7 @@ class MyHandler(XInput.EventHandler):
         pass
 
 
-#GUI
-
-
-def set_recording_file():
-    file_path = get_file()
+def set_recording_file(file_path):
     if eddiecontroller.playing:
         print("Recording currently playing, can't load new recording", file=writer)
         return
@@ -188,8 +216,15 @@ def set_recording_file():
         else:
             eddiecontroller.recordings_file = temp
 
+#GUI
 
-def get_file():
+
+def choose_recording_file():
+    file_path = choose_file()
+    set_recording_file(file_path)
+
+
+def choose_file():
     dlg = QFileDialog()
     dlg.setFileMode(QFileDialog.AnyFile)
     dlg.setDirectory('')
@@ -252,7 +287,7 @@ class GUI(QWidget):
         self.resize(905, 500)
         self.setMinimumWidth(1050)
         self.setAcceptDrops(True)
-        self.setWindowTitle('Eddienput')
+        self.setWindowTitle('Eddienput v1.1')
         self.setWindowIcon(QtGui.QIcon('icon.ico'))
         self.setStyleSheet("QWidget { background-color : rgb(54, 57, 63); color : rgb(220, 221, 222); }")
         v_layout = QVBoxLayout()
@@ -265,13 +300,21 @@ class GUI(QWidget):
         # self.path_box.setMaximumHeight(25)
         # main_layout.addWidget(self.path_box)
 
+        self.hotkeys_button = QPushButton()
+        self.hotkeys_button.setText('Suppress Hotkeys')
+        self.hotkeys_button.clicked.connect(toggle_suppress_hotkeys)
+        self.hotkeys_button.setStyleSheet(
+            "QPushButton { background-color : rgb(44, 47, 53); color : rgb(220, 221, 222); }")
+        self.hotkeys_button.setCheckable(True)
+        main_layout.addWidget(self.hotkeys_button)
+
         self.drop_file_label = DropFileLabel()
         self.drop_file_label.setMinimumWidth(455)
         main_layout.addWidget(self.drop_file_label)
 
         self.path_button = QPushButton()
         self.path_button.setText('Select Recording File')
-        self.path_button.clicked.connect(set_recording_file)
+        self.path_button.clicked.connect(choose_recording_file)
         self.path_button.setStyleSheet("QPushButton { background-color : rgb(44, 47, 53); color : rgb(220, 221, 222); }")
         main_layout.addWidget(self.path_button)
 
@@ -317,19 +360,10 @@ class GUI(QWidget):
         event.accept()
 
     def dropEvent(self, event):
-        if eddiecontroller.playing:
-            print("Recording currently playing, can't load new recording", file=writer)
-            return
         if event.mimeData().hasText:
             event.setDropAction(Qt.CopyAction)
             file_path: str = event.mimeData().urls()[0].toLocalFile()
-            if file_path.endswith('.txt'):
-                temp = eddiecontroller.recordings_file
-                eddiecontroller.recordings_file = file_path
-                if eddiecontroller.load_recordings():
-                    self.recordings_file_label.setText('Active Recording File: \n' + eddiecontroller.recordings_file)
-                else:
-                    eddiecontroller.recordings_file = temp
+            set_recording_file(file_path)
             event.accept()
         else:
             event.ignore()
@@ -348,6 +382,7 @@ if __name__ == "__main__":
     else:
         print('No XInput controller detected', file=writer)
     eddiecontroller.vcontroller.connect(False)
+    load_config()
     w.show()
     with Listener(on_press=on_press) as listener:
         app.exec_()

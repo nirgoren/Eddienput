@@ -1,3 +1,4 @@
+configs\dbfz.json
 2 3 6 S W60
 L W60
 M W60

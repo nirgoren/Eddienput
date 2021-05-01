@@ -10,7 +10,10 @@
     "A2": "TriggerL",
     "select": "BtnBack",
     "start": "BtnStart",
-    "beep": "beep"
+    "beep": "beep.wav",
+    "beep1": "beep_low.wav",
+    "beep2": "beep.wav",
+    "beep3": "beep_high.wav"
   },
 
   "P1_directions": {

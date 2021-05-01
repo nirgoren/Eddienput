@@ -1,2 +1,2 @@
-gg.json
+configs\gg.json
 2 3 6 P W13 K+S+H+beep W60

@@ -1,8 +1,0 @@
-gg.json
-startmix
-option
-S W20 2+H 2
-option
-S W40
-endmix
-W60

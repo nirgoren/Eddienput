@@ -1,0 +1,7 @@
+configs\iamp_keyboard.json
+6 [6] W5 ]6[ W60
+
+A W60
+B W60
+C W60
+[6]+D W5 ]6[ W60

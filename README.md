@@ -1,19 +1,23 @@
 # Eddienput
-Eddienput (pronounced "edd-input") is a programmable virtual controller mainly aimed at enhancing training mode for all fighting games on PC. 
+
+Eddienput (pronounced "edd-input") is a programmable virtual controller mainly aimed at enhancing training mode for all fighting games on PC.
 
 ## Prerequisites:  
+
 Install ViGEmBusSetup_x64.msi (provided with the program)
 
 ## Usage:
+
 The most common usage scenario would be to define recordings/mixups in a recording file, load the file and play the recording. You can do so by following these steps:
 1. Start Eddienput.exe with your own controller already connected (a second virtual controller should be connected as the program starts)
 2. Define recordings/mixups in a recording file (txt format) according to the syntax described below, save it and load the recording file into the program (drag and drop)
-3. Now go into training mode in your game and select "controller" as the dummy action. If asked by the game to press start on P2 controller, press the "home" key on your keyboard to simulate pressing start on the virtual controller (required in some games) 
+3. Now go into training mode in your game and select "controller" as the dummy action. If asked by the game to press start on P2 controller, press the "home" key on your keyboard to simulate pressing start on the virtual controller (required in some games)
 4. You can now press F3 on your keyboard or a mapped button on your controller to play the recording by simulating button presses on P2 controller
 
 You can also share your recording files with other players in your community in order to share combos, mixups and more. You can find some example recording files in the recordings folder.
 
 ### Hotkeys:
+
 * Player 1 Side                          - F1
 * Player 2 Side                          - F2
 * Play Sequence                          - F3 / Custom
@@ -27,18 +31,21 @@ You can also share your recording files with other players in your community in 
 * Press Select on P2 Controller          - End Key
 * Toggle Manual P2 Control (for Mapping) - Insert Key
 
+Hoykeys can be suppressed by toggling `Suppress Hotkeys` in the GUI window.
+
 ### Notation:  
+
 * *#* - Start a comment line
 * W*number* - Wait a certain number of frames (*number* being a positive integer)
 * *X* - Tap *X* and release the next frame
 * [*X*] - Hold *X*
 * ]*X*[ - Release *X*
-* Note - For directions, if you want to switch from held direction to another held direction, 
+* Note - For directions, if you want to switch from held direction to another held direction,
 there's no need to release in between.
-(For example, if you want to go from down to forwards, just do 
-```[2] W10 [6]``` 
-instead of 
-```[2] W10 ]2[+[6]```)
+(For example, if you want to go from down to forwards, just do
+`[2] W10 [6]`
+instead of
+`[2] W10 ]2[+[6]`)
 * **The above does not hold if the directions are mapped to keyboard keys (experimental)
 * *+* - Add input to the same frame
 #### Example:
@@ -56,6 +63,7 @@ K+P+S+H
 ```
 
 ### Mixups:
+
 * Mixups consist of several user defined options, one of which is chosen at random based on the weights of the options
 * A line consisting of the *startmix* keyword indicates the beginning of a mixup definition
 * Options are defined with a line consisting of the *option* keyword optionally followed by a weight (non-negative integer)
@@ -83,7 +91,8 @@ endmix
 ```
 
 ### Looping:
-* Actions can be repeated several times by defining a loop 
+
+* Actions can be repeated several times by defining a loop
 * A line consisting of the *startloop* keyword followed by the number of repetitions (a positive integer) indicates the beginning of a loop definition
 * Actions in the lines following the loop definition will be repeated by the number of repetitions defined
 * Close the loop definition with a line consisting of the *endloop* keyword
@@ -104,10 +113,12 @@ endloop
 ```
 
 ## Config files:  
+
 You can define symbols, reassign symbols to other buttons, and set up macros in a JSON config file (see configs\gg.json for an example).  
 The first line of a recordings file should always be the path (absolute or relative) to the config file to be used.
 
 #### Reserved symbols:  
+
 * W*number*
 * *+*
 * startmix
@@ -121,7 +132,7 @@ The first line of a recordings file should always be the path (absolute or relat
 #### Supported virtual controller buttons to map a symbol to:  
 <details>
   <summary>Click to expand</summary>
-  
+
   * "BtnA"
   * "BtnB"
   * "BtnX"
@@ -146,7 +157,7 @@ The first line of a recordings file should always be the path (absolute or relat
 #### Supported virtual keyboard buttons to map a symbol to (experimental):
 <details>
   <summary>Click to expand</summary>
-  
+
   * 'shift'
   * '0'             
   * '1'             
@@ -205,7 +216,9 @@ The first line of a recordings file should always be the path (absolute or relat
   * 'enter'         
 </details>
 
-#### Others:
+## Others:
+
+### Playing sounds
 * "beep" - Plays a beep sound
 #### Example:
 ```
@@ -214,21 +227,38 @@ configs\gg.json
 6 3 2 1 4 6+H W63 beep
 ```
 
+To associate a symbol with some audio queue, in the config file add a mapping from
+the symbol to its respective `.wav` file (see `configs\gg.json` for an example).
+
+### General config file
+
+In addition to the recording specific config file, Eddienput also loads some settings from a general config file in its directory `config.json` when it starts up. The settings that can be configured are:
+
+* `default_recording`: A path to a recording file to load as the program starts.
+* `rec_start_end_sound`: Either set to `true` or `false`, sets whether to play a sound when a recording starts/ends playing.
+* `side`: Set to either `P1` or `P2`, sets which player side to use as the program starts up.
+
 ## Known Issues:
 #### KOF2002 UM:
-* Inputs are inconsistent when symbols are mapped to a virtual controller. They are more consistent when mapped to keys on the keyboard (use configs\kof_keyboard.json)
+
+* Inputs are inconsistent when symbols are mapped to a virtual controller. They are more consistent when mapped to keys on the keyboard (use `configs\kof_keyboard.json`)
 
 #### Guilty Gear Accent Core +R:
-* P2 movement keys not recognized when mapped to keys on the keyboard (use gg.json). If you are a keyboard player, run two instances of the program at the same time (or connect some a real controller if you have one) so that the second virtual controller will be treated as P2's
+
+* P2 movement keys not recognized when mapped to keys on the keyboard (use `gg.json`). If you are a keyboard player, run two instances of the program at the same time (or connect some a real controller if you have one) so that the second virtual controller will be treated as P2's
 
 #### Melty Blood Actress Again Current Code Community Edition:
+
 * Does not work with cccaster.exe, run with MBAA.exe instead
 
 #### Touhou 7.5: Suimusou - Immaterial and Missing Power
+
 * Mapping to the keyboard arrow keys does not work. Assign the game's movement keys for P2 to some other keys (see configs\iamp_keyboard.json)
 
 #### Mapping play button to a controller button
+
 * Only supported on XInput controllers. If you use a PS4 pad, a possible workaround would be to use DS4Windows
 
 #### Inconsistent inputs:
-* It is recommended to disable Steam's Xbox controller support, as that intoduces input inconsistencies (This most likely applies to XInput controllers in general)
+
+* It is recommended to disable Steam's Xbox controller support, as that introduces input inconsistencies (This most likely applies to XInput controllers in general)

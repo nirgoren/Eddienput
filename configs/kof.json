@@ -6,13 +6,16 @@
     "D": "BtnB",
     "select": "BtnBack",
     "start": "BtnStart",
-    "beep": "beep",
     "LP": "BtnX",
     "LK": "BtnA",
     "SP": "BtnY",
     "SK": "BtnB",
     "HP": "BtnY",
-    "HK": "BtnB"
+    "HK": "BtnB",
+    "beep": "sounds\\beep.wav",
+    "beep1": "sounds\\beep_low.wav",
+    "beep2": "sounds\\beep.wav",
+    "beep3": "sounds\\beep_high.wav"
   },
 
   "P1_directions": {

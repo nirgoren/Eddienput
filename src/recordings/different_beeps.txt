@@ -1,0 +1,4 @@
+configs\gg.json
+K+beep W60
+S+beep_low W60
+H+beep_high W60

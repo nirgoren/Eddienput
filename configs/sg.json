@@ -2,12 +2,12 @@
   "FPS": 60,
 
   "Symbols": {
-    "LK": "BtnA",
     "LP": "BtnX",
+    "LK": "BtnA",
     "MP": "BtnY",
+    "MK": "BtnB",
     "HP": "BtnShoulderR",
     "HK": "TriggerR",
-    "MK": "BtnB",
     "select": "BtnBack",
     "start": "BtnStart",
     "beep": "sounds\\beep.wav",
@@ -39,6 +39,11 @@
   },
 
   "Macros": {
+    "A1": "LK+MP",
+    "A2": "MK+HP",
+    "Throw": "LK+LP",
+    "Tag1": "MK+MP",
+    "Tag2": "HK+HP",
     "5": "]1[",
     "QCF": "2 3 6",
     "QCB": "2 1 4",

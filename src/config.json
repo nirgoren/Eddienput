@@ -1,0 +1,5 @@
+{
+  "default_recording": "recordings\\gg_test.txt",
+  "rec_start_end_sound": "true",
+  "side": "P2"
+}

@@ -9,9 +9,9 @@ import key_emulation
 import winsound
 import re
 
-START_PLAYING_SOUND = "boop.wav"
-END_PLAYING_SOUND = "boop_low.wav"
-QUE_SOUND = "beep.wav"
+START_PLAYING_SOUND = "./sounds/boop.wav"
+END_PLAYING_SOUND = "./sounds/boop_low.wav"
+# QUE_SOUND = "beep.wav"
 WAIT_CONST = 'W'
 NEXT_CONST = 'next'
 COMMENT_SYMBOL = '#'
@@ -83,7 +83,7 @@ def set_button_value(button, value):
         key_emulation.update_button_value(button, value)
     else:
         controller_state.update_state(button, value)
-    #print("pressed:", button, value, time.perf_counter()*60)
+    # print("pressed:", button, value, time.perf_counter()*60)
 
 
 def release_all():
@@ -109,9 +109,9 @@ def play_queue():
         if playing:
             clock.sleep()
             for button, val in frame:
-                if button == 'beep':
+                if button.endswith('.wav'):
                     if val == 1:
-                        play_sound_async(QUE_SOUND)
+                        play_sound_async(button)
                 else:
                     set_button_value(button, val)
             vcontroller.set_state(controller_state)
@@ -461,4 +461,3 @@ def load_config():
 
 def reset():
     load_recordings()
-

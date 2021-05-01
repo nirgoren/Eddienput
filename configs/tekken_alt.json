@@ -1,0 +1,46 @@
+{
+  "FPS": 60,
+
+  "Symbols": {
+    "1": "BtnX",
+    "2": "BtnY",
+    "3": "BtnA",
+    "4": "BtnB",
+    "RA": "BtnShoulderR",
+    "select": "BtnBack",
+    "start": "BtnStart",
+    "beep": "sounds\\beep.wav",
+    "beep1": "sounds\\beep_low.wav",
+    "beep2": "sounds\\beep.wav",
+    "beep3": "sounds\\beep_high.wav"
+  },
+
+  "P1_directions": {
+    "d": { "Dpad": "down" },
+    "b": { "Dpad": "left" },
+    "f": { "Dpad": "right" },
+    "u": { "Dpad": "up" },
+    "d/b": { "Dpad": "down_left" },
+    "d/f": { "Dpad": "down_right" },
+    "u/b": { "Dpad": "up_left" },
+    "u/f": { "Dpad": "up_right" }
+  },
+
+  "P2_directions": {
+    "d": { "Dpad": "down" },
+    "b": { "Dpad": "right" },
+    "f": { "Dpad": "left" },
+    "u": { "Dpad": "up" },
+    "d/b": { "Dpad": "down_right" },
+    "d/f": { "Dpad": "down_left" },
+    "u/b": { "Dpad": "up_right" },
+    "u/f": { "Dpad": "up_left" }
+  },
+
+  "Macros": {
+    "5": "]d[",
+    "SELECT": "select",
+    "START": "start",
+    "BEEP": "beep"
+  }
+}

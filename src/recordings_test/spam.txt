@@ -1,7 +1,0 @@
-configs\gg.json
-loop 300
-6 4
-endloop
-loop 300
-2 5
-endloop

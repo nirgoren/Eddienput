@@ -1,8 +1,0 @@
-dbfz.json
-6 5 [6] W10 ]6[ 2+L W12 M W18 H W12 2 3 6 L A1 W64 2+H
-startmix
-option
-W30 2+L
-option
-W22 6 5 6 W5 L
-endmix

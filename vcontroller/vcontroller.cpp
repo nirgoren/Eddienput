@@ -29,6 +29,8 @@ SOFTWARE.
 //
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <winternl.h>
+
 
 //
 // Optional depending on your use case
@@ -147,7 +149,52 @@ extern "C" {
     vigem_target_free(pad);
     vigem_disconnect(client);
     vigem_free(client);
+
     return 0;
+  }
+#ifdef __cplusplus
+}
+#endif
+
+// https://stackoverflow.com/a/41862592/14328557
+// Does not seem to be accurate enough
+#ifdef __cplusplus
+extern "C" {
+#endif
+/* Windows sleep in 100ns units */
+  __declspec(dllexport) int nanosleep(double seconds) {
+    /* Declarations */
+    HANDLE timer;   /* Timer handle */
+    LONGLONG ns = LONGLONG((seconds) * 10000000LL);
+    LARGE_INTEGER li;   /* Time defintion */
+    /* Set timer properties */
+    li.QuadPart = -ns;
+    /* Create timer */
+    if (!(timer = CreateWaitableTimer(NULL, TRUE, NULL)))
+    {
+      return FALSE;
+    }
+    if (!SetWaitableTimer(timer, &li, 0, NULL, NULL, FALSE)) {
+      CloseHandle(timer);
+      return FALSE;
+    }
+    /* Start & wait for timer */
+    WaitForSingleObject(timer, INFINITE);
+    /* Slept without problems */
+
+    /* Clean resources */
+    CloseHandle(timer);
+    return TRUE;
+}
+#ifdef __cplusplus
+}
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  __declspec(dllexport) void wait() {
+    std::this_thread::yield();
   }
 #ifdef __cplusplus
 }
