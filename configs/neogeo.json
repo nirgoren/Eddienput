@@ -8,7 +8,10 @@
     "B": "BtnB",
     "select": "BtnBack",
     "start": "BtnStart",
-    "beep": "beep"
+    "beep": "sounds\\beep.wav",
+    "beep1": "sounds\\beep_low.wav",
+    "beep2": "sounds\\beep.wav",
+    "beep3": "sounds\\beep_high.wav"
   },
 
   "P1_directions": {

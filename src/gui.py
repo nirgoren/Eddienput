@@ -63,6 +63,7 @@ activation_key = None
 manual_mode = False
 listen_to_hotkeys = True
 
+
 def load_config():
     try:
         f = open(CONFIG_FILE, 'r')

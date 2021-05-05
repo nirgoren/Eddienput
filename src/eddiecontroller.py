@@ -74,17 +74,22 @@ def toggle_mute():
 
 
 def play_sound_async(sound):
-    winsound.PlaySound(sound, winsound.SND_ASYNC | winsound.SND_ALIAS)
+    try:
+        winsound.PlaySound(sound, winsound.SND_ASYNC | winsound.SND_ALIAS)
+    except Exception as e:
+        print("Error playing sound", sound, ":", e, file=writer)
 
 
 def set_button_value(button, value):
     log_queue.append((button, value, time.perf_counter()*60))
-    if button in key_emulation.key_code_map:
-        key_emulation.update_button_value(button, value)
-    else:
-        controller_state.update_state(button, value)
-    # print("pressed:", button, value, time.perf_counter()*60)
-
+    try:
+        if button in key_emulation.key_code_map:
+            key_emulation.update_button_value(button, value)
+        else:
+            controller_state.update_state(button, value)
+        # print("pressed:", button, value, time.perf_counter()*60)
+    except Exception as e:
+        print("Error updating button value for ", button, "with value", value, ":", e, file=writer)
 
 def release_all():
     controller_state.reset()
