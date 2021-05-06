@@ -2,13 +2,12 @@
   "FPS": 60,
 
   "Symbols": {
-    "L": "BtnX",
-    "S": "BtnA",
-    "M": "BtnY",
-    "H": "BtnB",
-    "A1": "BtnShoulderL",
-    "A2": "TriggerL",
+    "A": "BtnX",
+    "D": "BtnA",
+    "B": "BtnY",
+    "C": "BtnB",
     "select": "BtnBack",
+    "start": "BtnStart",
     "beep": "sounds\\beep.wav",
     "beep1": "sounds\\beep_low.wav",
     "beep2": "sounds\\beep.wav",
