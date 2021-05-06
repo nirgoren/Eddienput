@@ -227,7 +227,7 @@ configs\gg.json
 6 3 2 1 4 6+H W63 beep
 ```
 
-To associate a symbol with some audio queue, in the config file add a mapping from
+To associate a symbol with some audio cue, in the config file add a mapping from
 the symbol to its respective `.wav` file (see `configs\gg.json` for an example).
 
 ### General config file

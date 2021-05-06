@@ -11,7 +11,7 @@ import re
 
 START_PLAYING_SOUND = "./sounds/boop.wav"
 END_PLAYING_SOUND = "./sounds/boop_low.wav"
-# QUE_SOUND = "beep.wav"
+# CUE_SOUND = "beep.wav"
 WAIT_CONST = 'W'
 NEXT_CONST = 'next'
 COMMENT_SYMBOL = '#'
