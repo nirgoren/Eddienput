@@ -42,7 +42,7 @@ Hoykeys can be suppressed by toggling `Suppress Hotkeys` in the GUI window.
 * ]*X*[ - Release *X*
 * Note - For directions, if you want to switch from held direction to another held direction,
 there's no need to release in between.
-(For example, if you want to go from down to forwards, just do
+(For example, if you want to go from down to forward, just do
 `[2] W10 [6]`
 instead of
 `[2] W10 ]2[+[6]`)
@@ -56,7 +56,7 @@ configs\gg.json
 # The first line (config\gg.json) indicates that we use the symbols and mappings defined in that file (that fit Guilty Gear notation)
 # In the next line, we tell the dummy to perform a Gunflame (Asumming Sol Badguy is selected as P2), and then wait 60 frames (one second)
 2 3 6+P W60
-# Now dash forward (tap forwards, wait one frame, then hold forwards) for 20 frames and then stop (release forwards)
+# Now dash forward (tap forward, wait one frame, then hold forward) for 20 frames and then stop (release forward)
 6 W1 [6] W20 ]6[
 # Now enter IK mode
 K+P+S+H
