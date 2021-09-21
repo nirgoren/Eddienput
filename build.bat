@@ -1,6 +1,6 @@
 rmdir /s /q "./build"
 rmdir /s /q "./dist"
-py -3.7 -m PyInstaller src/gui.py --noconsole --icon=src/icon.ico --name Eddienput
+PyInstaller src/gui.py --noconsole --icon=src/icon.ico --name Eddienput
 copy ViGEmBusSetup_x64.msi dist\Eddienput\ViGEmBusSetup_x64.msi
 copy src\ViGEmClient.dll dist\Eddienput\ViGEmClient.dll
 copy vcontroller\x64\Release\vcontroller.dll dist\Eddienput\vcontroller.dll

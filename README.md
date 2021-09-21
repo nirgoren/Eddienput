@@ -247,10 +247,6 @@ In addition to the recording specific config file, Eddienput also loads some set
 
 * P2 movement keys not recognized when mapped to keys on the keyboard (use `gg.json`). If you are a keyboard player, run two instances of the program at the same time (or connect some a real controller if you have one) so that the second virtual controller will be treated as P2's
 
-#### Melty Blood Actress Again Current Code Community Edition:
-
-* Does not work with cccaster.exe, run with MBAA.exe instead
-
 #### Touhou 7.5: Suimusou - Immaterial and Missing Power
 
 * Mapping to the keyboard arrow keys does not work. Assign the game's movement keys for P2 to some other keys (see configs\iamp_keyboard.json)
