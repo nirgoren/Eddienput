@@ -1,14 +1,13 @@
 import json
 
 from PyQt5 import QtGui
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPlainTextEdit, QTextEdit, QHBoxLayout, \
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QTextEdit, QHBoxLayout, \
     QPushButton, QFileDialog
-from PyQt5.QtCore import Qt, QObject, pyqtSignal, QRunnable, pyqtSlot, QThreadPool, QProcess
-from PyQt5.QtGui import QPixmap, QTextCursor, QFont, QColor, QTextCharFormat, QBrush, QImage
+from PyQt5.QtCore import Qt, QObject, pyqtSignal, QProcess
+from PyQt5.QtGui import QPixmap, QTextCursor, QFont, QColor, QTextCharFormat, QBrush
 from pynput.keyboard import Listener
 import XInput
 import sys
-import traceback
 from worker import Worker
 import eddiecontroller
 
@@ -154,11 +153,10 @@ def on_press(key):
         global manual_mode
         if not manual_mode:
             print('Manual mode activated (Manual mode is not fit for playing)', file=writer)
-            w.controller_image.show()
+            w.toggle_image_signal.emit(True)
         else:
             print('Manual mode deactivated', file=writer)
-            w.controller_image.hide()
-            w.adjustSize()
+            w.toggle_image_signal.emit(False)
         manual_mode = not manual_mode
     # manual control with the keyboard
     if manual_mode and not eddiecontroller.playing:
@@ -282,10 +280,11 @@ class Writer(QObject):
 
 
 class GUI(QWidget):
+    toggle_image_signal = pyqtSignal(bool)
 
     def __init__(self):
         super().__init__()
-        self.resize(905, 500)
+        self.toggle_image_signal.connect(self.toggleImage)
         self.setMinimumWidth(1050)
         self.setAcceptDrops(True)
         self.setWindowTitle('Eddienput v1.1')
@@ -347,12 +346,21 @@ class GUI(QWidget):
         h_layout.addWidget(self.text_edit)
 
         self.controller_image = QLabel()
-        self.controller_image.setPixmap(QPixmap('eddienput_controller.png').scaledToWidth(910))
+        self.pixmap = QPixmap('eddienput_controller.png').scaledToWidth(700)
+        self.controller_image.setPixmap(self.pixmap)
+        self.controller_image.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.controller_image.hide()
         v_layout.addWidget(self.controller_image)
 
         self.setLayout(v_layout)
         self.process = QProcess(self)
+
+    def toggleImage(self, visible):
+        if visible:
+            self.controller_image.show()
+        else:
+            self.controller_image.hide()
+        self.adjustSize()
 
     def dragEnterEvent(self, event):
         event.accept()
