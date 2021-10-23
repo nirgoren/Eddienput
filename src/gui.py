@@ -72,13 +72,14 @@ def load_config():
             eddiecontroller.recordings_file = default_rec
             set_recording_file(default_rec)
         if 'side' in config:
-            side = config['side'].lower()
-            if side == 'p1':
+            if config['side'].lower() == 'p1':
                 set_side(0)
         if 'rec_start_end_sound' in config:
-            sound = config['rec_start_end_sound'].lower()
-            if sound == 'false':
+            if config['rec_start_end_sound'].lower() == 'false':
                 eddiecontroller.toggle_mute()
+        if 'hot_reload' in config:
+            if config['hot_reload'].lower() == 'false':
+                eddiecontroller.hot_reload = False
     except IOError as e:
         print('Failed to open config file:', e, file=writer)
 
@@ -110,30 +111,40 @@ def on_press(key):
         return
     key_val = str(key)
     #print("received", key_val)
+    # Ignore all hotkeys but F4 while a recording is playing
     if key_val == "Key.f4":  # F4
         eddiecontroller.playing = False
+        return
     elif eddiecontroller.playing:
         return
-    if capture_activation_key:
+    # Handled here to not allow setting F9 as the playback button
+    if key_val == "Key.f9":  # F9
+        activation_key = None
+        capture_activation_key = True
+        print('Capturing playback button...', file=writer)
+        return
+    elif capture_activation_key:
         capture_activation_key = False
         activation_key = key_val
         print('Playback button set to', key_val, file=writer)
         w.playback_button_label.setText('Playback button: \n' + activation_key)
-    elif key_val == activation_key:
-        worker = Worker(eddiecontroller.run_scenario)
-        eddiecontroller.threadpool.start(worker)
         return
     if eddiecontroller.recordings_file:
-        if key_val == "Key.f5":  # F5
-            print("Reloading script", file=writer)
-            eddiecontroller.reset()
+        # Activation key takes precedence
+        if key_val == activation_key or key_val == "Key.f3": # F3
+            if eddiecontroller.hot_reload:
+                print("Reloading script", file=writer)
+                eddiecontroller.reset()
+            worker = Worker(eddiecontroller.run_scenario)
+            eddiecontroller.threadpool.start(worker)
+            return
         if key_val == "Key.f1":  # F1
             set_side(0)
         if key_val == "Key.f2":  # F2
             set_side(1)
-        if key_val == "Key.f3":  # F3
-            worker = Worker(eddiecontroller.run_scenario)
-            eddiecontroller.threadpool.start(worker)
+        if key_val == "Key.f5":  # F5
+            print("Reloading script", file=writer)
+            eddiecontroller.reset()
     if key_val == "Key.f6":  # F6
         set_repetitions(max(1, eddiecontroller.repetitions - 1))
     if key_val == "Key.f7":  # F7
@@ -145,10 +156,6 @@ def on_press(key):
     if key_val == "Key.f8":  # F8
         eddiecontroller.toggle_mute()
         w.mute_label.setText('Start/End Sequence Sound: ' + on_off_map[eddiecontroller.mute])
-    if key_val == "Key.f9":  # F9
-        activation_key = None
-        capture_activation_key = True
-        print('Capturing playback button...', file=writer)
     if key_val == "Key.insert":  # insert
         global manual_mode
         if not manual_mode:
@@ -287,7 +294,7 @@ class GUI(QWidget):
         self.toggle_image_signal.connect(self.toggleImage)
         self.setMinimumWidth(1050)
         self.setAcceptDrops(True)
-        self.setWindowTitle('Eddienput v1.1')
+        self.setWindowTitle('Eddienput v1.2')
         self.setWindowIcon(QtGui.QIcon('icon.ico'))
         self.setStyleSheet("QWidget { background-color : rgb(54, 57, 63); color : rgb(220, 221, 222); }")
         v_layout = QVBoxLayout()

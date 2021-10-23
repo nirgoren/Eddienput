@@ -1,5 +1,6 @@
 {
   "default_recording": "recordings\\gg_test.txt",
   "rec_start_end_sound": "true",
-  "side": "P2"
+  "side": "P2",
+  "hot_reload": "true"
 }

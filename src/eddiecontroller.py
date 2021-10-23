@@ -34,6 +34,7 @@ to_release = set()
 
 playing = False
 mute = False
+hot_reload = True
 P1_directions_map = {}
 P2_directions_map = {}
 direction_maps = [P1_directions_map, P2_directions_map]
@@ -125,7 +126,6 @@ def play_queue():
     playing = False
     # for button, val, t in log_queue:
     #     print("pressed:", button, val, t)
-    return
 
 
 # parse a string into a series of frame commands

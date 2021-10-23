@@ -236,6 +236,8 @@ In addition to the recording specific config file, Eddienput also loads some set
 
 * `default_recording`: A path to a recording file to load as the program starts.
 * `rec_start_end_sound`: Either set to `true` or `false`, sets whether to play a sound when a recording starts/ends playing.
+* `hot_reload`: Either set to `true` to `false`, sets whether the recording file is to be
+reloaded automatically upon play.
 * `side`: Set to either `P1` or `P2`, sets which player side to use as the program starts up.
 
 ## Known Issues:
