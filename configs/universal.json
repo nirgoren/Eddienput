@@ -1,0 +1,43 @@
+{
+  "FPS": 60,
+
+  "Symbols": {
+    "X": "BtnX",
+    "A": "BtnA",
+    "Y": "BtnY",
+    "B": "BtnB",
+    "RIGHT_SHOULDER": "BtnShoulderR",
+    "RIGHT_TRIGGER": "TriggerR",
+    "BACK": "BtnBack",
+    "START": "BtnStart",
+    "beep": "sounds\\beep.wav",
+    "beep1": "sounds\\beep_low.wav",
+    "beep2": "sounds\\beep.wav",
+    "beep3": "sounds\\beep_high.wav"
+  },
+
+  "P1_directions": {
+    "DPAD_DOWN": { "Dpad": "down" },
+    "DPAD_LEFT": { "Dpad": "left" },
+    "DPAD_RIGHT": { "Dpad": "right" },
+    "DPAD_UP": { "Dpad": "up" },
+    "DPAD_DOWN_LEFT": { "Dpad": "down_left" },
+    "DPAD_DOWN_RIGHT": { "Dpad": "down_right" },
+    "DPAD_UP_LEFT": { "Dpad": "up_left" },
+    "DPAD_UP_RIGHT": { "Dpad": "up_right" }
+  },
+
+  "P2_directions": {
+    "DPAD_DOWN": { "Dpad": "down" },
+    "DPAD_RIGHT": { "Dpad": "left" },
+    "DPAD_LEFT": { "Dpad": "right" },
+    "DPAD_UP": { "Dpad": "up" },
+    "DPAD_DOWN_RIGHT": { "Dpad": "down_left" },
+    "DPAD_DOWN_LEFT": { "Dpad": "down_right" },
+    "DPAD_UP_RIGHT": { "Dpad": "up_left" },
+    "DPAD_UP_LEFT": { "Dpad": "up_right" }
+  },
+
+  "Macros": {
+  }
+}

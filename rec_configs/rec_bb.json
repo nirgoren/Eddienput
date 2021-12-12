@@ -1,0 +1,31 @@
+{
+    "config": "configs/bb.json",
+    "Symbols": {
+        "X": "A",
+        "A": "D",
+        "Y": "B",
+        "B": "C",
+        "START": "start",
+        "BACK": "select"
+    },
+    "P1_directions": {
+        "DPAD_UP": "8",
+        "DPAD_DOWN": "2",
+        "DPAD_LEFT": "4",
+        "DPAD_RIGHT": "6",
+        "DPAD_DOWN_LEFT": "1",
+        "DPAD_DOWN_RIGHT": "3",
+        "DPAD_UP_LEFT": "7",
+        "DPAD_UP_RIGHT": "9"
+    },
+    "P2_directions": {
+        "DPAD_UP": "8",
+        "DPAD_DOWN": "2",
+        "DPAD_LEFT": "6",
+        "DPAD_RIGHT": "4",
+        "DPAD_DOWN_LEFT": "3",
+        "DPAD_DOWN_RIGHT": "1",
+        "DPAD_UP_LEFT": "9",
+        "DPAD_UP_RIGHT": "7"
+    }
+}

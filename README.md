@@ -8,13 +8,13 @@ Install ViGEmBusSetup_x64.msi (provided with the program)
 
 ## Usage:
 
-The most common usage scenario would be to define recordings/mixups in a recording file, load the file and play the recording. You can do so by following these steps:
+The most common usage scenario would be to define playbacks/mixups in a playbacks file, load the file and play it. You can do so by following these steps:
 1. Start Eddienput.exe with your own controller already connected (a second virtual controller should be connected as the program starts)
-2. Define recordings/mixups in a recording file (txt format) according to the syntax described below, save it and load the recording file into the program (drag and drop)
+2. Define playbacks/mixups in a playbacks file (txt format) according to the syntax described below, save it and load the playbacks file into the program (drag and drop)
 3. Now go into training mode in your game and select "controller" as the dummy action. If asked by the game to press start on P2 controller, press the "home" key on your keyboard to simulate pressing start on the virtual controller (required in some games)
-4. You can now press F3 on your keyboard or a mapped button on your controller to play the recording by simulating button presses on P2 controller
+4. You can now press F3 on your keyboard or a mapped button on your controller to play the playback by simulating button presses on P2 controller
 
-You can also share your recording files with other players in your community in order to share combos, mixups and more. You can find some example recording files in the recordings folder.
+You can also share your playbacks files with other players in your community in order to share combos, mixups and more. You can find some example playbacks files in the playbacks folder.
 
 ### Hotkeys:
 
@@ -115,7 +115,7 @@ endloop
 ## Config files:  
 
 You can define symbols, reassign symbols to other buttons, and set up macros in a JSON config file (see configs\gg.json for an example).  
-The first line of a recordings file should always be the path (absolute or relative) to the config file to be used.
+The first line of a playbacks file should always be the path (absolute or relative) to the config file to be used.
 
 #### Reserved symbols:  
 
@@ -232,13 +232,15 @@ the symbol to its respective `.wav` file (see `configs\gg.json` for an example).
 
 ### General config file
 
-In addition to the recording specific config file, Eddienput also loads some settings from a general config file in its directory `config.json` when it starts up. The settings that can be configured are:
+In addition to the plyaback specific config file, Eddienput also loads some settings from a general config file in its directory `config.json` when it starts up. The settings that can be configured are:
 
-* `default_recording`: A path to a recording file to load as the program starts.
-* `rec_start_end_sound`: Either set to `true` or `false`, sets whether to play a sound when a recording starts/ends playing.
-* `hot_reload`: Either set to `true` to `false`, sets whether the recording file is to be
+* `playback`: A path to a playbacks file to load as the program starts.
+* `playback_start_end_sound`: Either set to `true` or `false`, sets whether to play a sound when a playback starts/ends playing.
+* `hot_reload`: Either set to `true` to `false`, sets whether the playbacks file is to be
 reloaded automatically upon play.
 * `side`: Set to either `P1` or `P2`, sets which player side to use as the program starts up.
+* `record_to`: Set the default location to record to.
+* `rec_config`: A path to the default configuration to be used for recording.
 
 ## Known Issues:
 #### KOF2002 UM:

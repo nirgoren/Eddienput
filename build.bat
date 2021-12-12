@@ -8,7 +8,8 @@ copy src\icon.ico dist\Eddienput\icon.ico
 copy src\config.json dist\Eddienput\config.json
 copy src\eddienput_controller.png dist\Eddienput\eddienput_controller.png
 Xcopy /E /I configs dist\Eddienput\configs
-Xcopy /E /I recordings dist\Eddienput\recordings
+Xcopy /E /I playbacks dist\Eddienput\playbacks
+Xcopy /E /I rec_configs dist\Eddienput\rec_configs
 Xcopy /E /I src\sounds dist\Eddienput\sounds
 copy LICENSE dist\Eddienput\LICENSE
 copy README.md dist\Eddienput\README.md

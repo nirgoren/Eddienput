@@ -1,0 +1,37 @@
+{
+    "config": "configs/universal.json",
+    "Symbols": {
+        "X": "X",
+        "A": "A",
+        "Y": "Y",
+        "B": "B",
+        "START": "START",
+        "BACK": "BACK",
+        "LEFT_THUMB": "LEFT_THUMB",
+        "RIGHT_THUMB": "RIGHT_THUMB",
+        "LEFT_SHOULDER": "LEFT_SHOULDER",
+        "RIGHT_SHOULDER": "RIGHT_SHOULDER",
+        "LEFT_TRIGGER": "LEFT_TRIGGER",
+        "RIGHT_TRIGGER": "RIGHT_TRIGGER"
+    },
+    "P1_directions": {
+        "DPAD_UP": "DPAD_UP",
+        "DPAD_DOWN": "DPAD_DOWN",
+        "DPAD_LEFT": "DPAD_LEFT",
+        "DPAD_RIGHT": "DPAD_RIGHT",
+        "DPAD_DOWN_LEFT": "DPAD_DOWN_LEFT",
+        "DPAD_DOWN_RIGHT": "DPAD_DOWN_RIGHT",
+        "DPAD_UP_LEFT": "DPAD_UP_LEFT",
+        "DPAD_UP_RIGHT": "DPAD_UP_RIGHT"
+    },
+    "P2_directions": {
+        "DPAD_UP": "DPAD_UP",
+        "DPAD_DOWN": "DPAD_DOWN",
+        "DPAD_LEFT": "DPAD_LEFT",
+        "DPAD_RIGHT": "DPAD_RIGHT",
+        "DPAD_DOWN_LEFT": "DPAD_DOWN_LEFT",
+        "DPAD_DOWN_RIGHT": "DPAD_DOWN_RIGHT",
+        "DPAD_UP_LEFT": "DPAD_UP_LEFT",
+        "DPAD_UP_RIGHT": "DPAD_UP_RIGHT"
+    }
+}

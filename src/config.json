@@ -1,6 +1,8 @@
 {
-  "default_recording": "recordings\\gg_test.txt",
-  "rec_start_end_sound": "true",
+  "playback": "playbacks\\gg_test.txt",
+  "playback_start_end_sound": "true",
   "side": "P2",
-  "hot_reload": "true"
+  "hot_reload": "true",
+  "record_to": "playbacks\\recording.txt",
+  "rec_config": "rec_configs\\rec_universal.json"
 }

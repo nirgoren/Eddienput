@@ -1,6 +1,0 @@
-configs\kof_keyboard.json
-2 3 6 A W60
-A W60
-B W60
-C W60
-D W60
