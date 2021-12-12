@@ -107,7 +107,8 @@ def record(symbol_map: dict, direction_index: int):
         parsed_frames.append(parsed_frame)
 
     # Compress empty frames
-    parsed_frames = parsed_frames[1:]
+    while not parsed_frames[0]:
+        parsed_frames = parsed_frames[1:]
     compressed_frames = []
     empty_frames_count = 0
     for frame in parsed_frames:

@@ -1,4 +1,5 @@
 import json
+import os
 
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QApplication, QLineEdit, QWidget, QVBoxLayout, QLabel, QTextEdit, QHBoxLayout, \
@@ -273,19 +274,20 @@ def set_rec_config_file(file_path):
 
 
 def choose_playbacks_file():
-    file_path = choose_file()
+    file_path = choose_file(filter='*.txt', directory=os.getcwd() + '\\playbacks')
     set_playback_file(file_path)
 
 
 def choose_rec_config_file():
-    file_path = choose_file()
+    file_path = choose_file(filter='*.json', directory=os.getcwd() + '\\rec_configs')
     set_rec_config_file(file_path)
 
 
-def choose_file():
+def choose_file(filter, directory):
     dlg = QFileDialog()
-    dlg.setFileMode(QFileDialog.AnyFile)
-    dlg.setDirectory('')
+    dlg.setFileMode(QFileDialog.ExistingFile)
+    dlg.setNameFilter(filter)
+    dlg.setDirectory(directory)
     if dlg.exec_():
         filenames = dlg.selectedFiles()
         return filenames[0]

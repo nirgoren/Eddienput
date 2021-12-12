@@ -1,5 +1,5 @@
 {
-  "playback": "playbacks\\gg_test.txt",
+  "playback": "playbacks\\recording.txt",
   "playback_start_end_sound": "true",
   "side": "P2",
   "hot_reload": "true",
