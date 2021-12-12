@@ -40,12 +40,12 @@ Hoykeys can be suppressed by toggling `Suppress Hotkeys` in the GUI window.
 * *X* - Tap *X* and release the next frame
 * [*X*] - Hold *X*
 * ]*X*[ - Release *X*
-* Note - For directions, if you want to switch from held direction to another held direction,
-there's no need to release in between.
-(For example, if you want to go from down to forward, just do
+* Note - For directions, if you want to switch directly from held direction to another held direction,
+do not release the held direction in between.
+For example, if you want to go from down to forward, just do
 `[2] W10 [6]`
 instead of
-`[2] W10 ]2[+[6]`)
+`[2] W10 ]2[+[6]`
 * **The above does not hold if the directions are mapped to keyboard keys (experimental)
 * *+* - Add input to the same frame
 #### Example:
@@ -115,7 +115,7 @@ endloop
 ## Config files:  
 
 You can define symbols, reassign symbols to other buttons, and set up macros in a JSON config file (see configs\gg.json for an example).  
-The first line of a playbacks file should always be the path (absolute or relative) to the config file to be used.
+The first line of a playback file should always be the path (absolute or relative) to the config file to be used.
 
 #### Reserved symbols:  
 
@@ -216,6 +216,10 @@ The first line of a playbacks file should always be the path (absolute or relati
   * 'enter'         
 </details>
 
+## Recording:
+The program can listen to controller inputs and generate Eddienput playbacks files. A controller has to be connected as the program starts to enable this feature.
+
+Recording is initiated by pressing F10 on the keyboard. Once stopped by pressing the select button on the controller, the recorded inputs will be written into a playbacks file. The loaded recording configuration json file determines the symbols each button will be translated to, which should match the symbols defined in the configuration file for the generated playbacks file. If the loaded recording configuration file does not define a mapping between a button and a symbol, that button is ignored. See `rec_configs/rec.json` or `rec_configs/rec_bb.json` for examples.
 ## Others:
 
 ### Playing sounds
