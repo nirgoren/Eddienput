@@ -8,6 +8,8 @@
     "B": "BtnB",
     "RIGHT_SHOULDER": "BtnShoulderR",
     "RIGHT_TRIGGER": "TriggerR",
+    "LEFT_SHOULDER": "BtnShoulderL",
+    "LEFT_TRIGGER": "TriggerL",
     "BACK": "BtnBack",
     "START": "BtnStart",
     "beep": "sounds\\beep.wav",
