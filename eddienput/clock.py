@@ -1,10 +1,10 @@
 from time import perf_counter
 import os
 from ctypes import *
-from pathlib import Path
+from common import *
 
 # for python 3.8 and up:
-with os.add_dll_directory(Path(__file__).parent):
+with os.add_dll_directory(ROOT_DIR):
     _vcontroller = cdll.LoadLibrary('vcontroller.dll')
 
 eps = 0.001

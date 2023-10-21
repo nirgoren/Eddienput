@@ -9,12 +9,13 @@ from PyQt6.QtGui import QPixmap, QTextCursor, QFont, QColor, QTextCharFormat, QB
 from pynput.keyboard import Listener
 import XInput
 import sys
+from eddienput.common import ROOT_DIR
 from worker import Worker
-import eddiecontroller
-import recording
+import eddienput.eddiecontroller as eddiecontroller
+import eddienput.recording as recording
 
 
-CONFIG_FILE = './config.json'
+CONFIG_FILE = ROOT_DIR / 'config.json'
 writer = None
 controller_detected = False
 capture_activation_key = None
