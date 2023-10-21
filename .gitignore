@@ -1,8 +1,8 @@
 tests/.idea/
 tests/__pycache__/
 build/
-src/.idea/
-src/__pycache__/
+eddienput/.idea/
+eddienput/__pycache__/
 test/
 dist/
 eddiebot.spec

@@ -1,11 +1,11 @@
 from time import perf_counter
 import os
 from ctypes import *
+from eddienput.common import *
 
 # for python 3.8 and up:
-# os.add_dll_directory(os.getcwd())
-
-_vcontroller = cdll.LoadLibrary('vcontroller.dll')
+with os.add_dll_directory(ROOT_DIR):
+    _vcontroller = cdll.LoadLibrary('vcontroller.dll')
 
 eps = 0.001
 

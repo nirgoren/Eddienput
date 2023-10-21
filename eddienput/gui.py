@@ -1,20 +1,21 @@
 import json
 import os
 
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QApplication, QLineEdit, QWidget, QVBoxLayout, QLabel, QTextEdit, QHBoxLayout, \
+from PyQt6 import QtGui
+from PyQt6.QtWidgets import QApplication, QLineEdit, QWidget, QVBoxLayout, QLabel, QTextEdit, QHBoxLayout, \
     QPushButton, QFileDialog
-from PyQt5.QtCore import Qt, QObject, pyqtSignal, QProcess
-from PyQt5.QtGui import QPixmap, QTextCursor, QFont, QColor, QTextCharFormat, QBrush
+from PyQt6.QtCore import Qt, QObject, pyqtSignal, QProcess
+from PyQt6.QtGui import QPixmap, QTextCursor, QFont, QColor, QTextCharFormat, QBrush
 from pynput.keyboard import Listener
 import XInput
 import sys
-from worker import Worker
-import eddiecontroller
-import recording
+from eddienput.common import ROOT_DIR
+from eddienput.worker import Worker
+import eddienput.eddiecontroller as eddiecontroller
+import eddienput.recording as recording
 
 
-CONFIG_FILE = './config.json'
+CONFIG_FILE = ROOT_DIR / 'config.json'
 writer = None
 controller_detected = False
 capture_activation_key = None
@@ -285,10 +286,10 @@ def choose_rec_config_file():
 
 def choose_file(filter, directory):
     dlg = QFileDialog()
-    dlg.setFileMode(QFileDialog.ExistingFile)
+    dlg.setFileMode(QFileDialog.FileMode.ExistingFile)
     dlg.setNameFilter(filter)
     dlg.setDirectory(directory)
-    if dlg.exec_():
+    if dlg.exec():
         filenames = dlg.selectedFiles()
         return filenames[0]
 
@@ -297,7 +298,7 @@ class DropFileLabel(QLabel):
     def __init__(self):
         super().__init__()
         #self.setAlignment(Qt.AlignCenter)
-        self.setFont(QFont("Consolas", 11, QFont.Bold))
+        self.setFont(QFont("Consolas", 11, QFont.Weight.Bold))
         self.setText('\n\n\t           Drop a Playbacks File Here \n\n' + HOTKEYS_TEXT)
         self.setStyleSheet('''
             QLabel{
@@ -313,7 +314,7 @@ class TextEdit(QTextEdit):
         self.color = QBrush(QColor(color))
 
     def append_text(self, string):
-        super().moveCursor(QTextCursor.End)
+        super().moveCursor(QTextCursor.MoveOperation.End)
         cursor = QTextCursor(super().textCursor())
 
         format_ = QTextCharFormat()
@@ -476,7 +477,7 @@ if __name__ == "__main__":
     load_config()
     w.show()
     with Listener(on_press=on_press) as listener:
-        app.exec_()
+        app.exec()
         listener.stop()
         eddiecontroller.vcontroller.disconnect()
         listener.join()

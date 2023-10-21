@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "eddienput"
+version = "2.0.0"
+description = ""
+authors = ["nirgoren <nir@gorenor.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.12,<3.13"
+XInput-Python = "^0.4.0"
+pynput = "^1.7.6"
+pyinstaller = "^6.1.0"
+pyqt6 = "^6.5.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

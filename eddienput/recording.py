@@ -1,5 +1,5 @@
 from XInput import State, get_state, get_button_values, get_trigger_values, get_connected
-from clock import Clock
+from eddienput.clock import Clock
 import sys
 import json
 
