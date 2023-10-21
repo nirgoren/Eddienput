@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QThreadPool
+from PyQt6.QtCore import QThreadPool
 
 from clock import Clock
 import time

@@ -1,6 +1,6 @@
 from ctypes import *
 
-_vcontroller = WinDLL('vcontroller.dll')
+_vcontroller = cdll.LoadLibrary('vcontroller.dll')
 
 buttons = {
 'Dpad'                  : 0x0001,

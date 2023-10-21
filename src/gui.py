@@ -1,11 +1,11 @@
 import json
 import os
 
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QApplication, QLineEdit, QWidget, QVBoxLayout, QLabel, QTextEdit, QHBoxLayout, \
+from PyQt6 import QtGui
+from PyQt6.QtWidgets import QApplication, QLineEdit, QWidget, QVBoxLayout, QLabel, QTextEdit, QHBoxLayout, \
     QPushButton, QFileDialog
-from PyQt5.QtCore import Qt, QObject, pyqtSignal, QProcess
-from PyQt5.QtGui import QPixmap, QTextCursor, QFont, QColor, QTextCharFormat, QBrush
+from PyQt6.QtCore import Qt, QObject, pyqtSignal, QProcess
+from PyQt6.QtGui import QPixmap, QTextCursor, QFont, QColor, QTextCharFormat, QBrush
 from pynput.keyboard import Listener
 import XInput
 import sys
@@ -297,7 +297,7 @@ class DropFileLabel(QLabel):
     def __init__(self):
         super().__init__()
         #self.setAlignment(Qt.AlignCenter)
-        self.setFont(QFont("Consolas", 11, QFont.Bold))
+        self.setFont(QFont("Consolas", 11, QFont.Weight.Bold))
         self.setText('\n\n\t           Drop a Playbacks File Here \n\n' + HOTKEYS_TEXT)
         self.setStyleSheet('''
             QLabel{
@@ -313,7 +313,7 @@ class TextEdit(QTextEdit):
         self.color = QBrush(QColor(color))
 
     def append_text(self, string):
-        super().moveCursor(QTextCursor.End)
+        super().moveCursor(QTextCursor.MoveOperation.End)
         cursor = QTextCursor(super().textCursor())
 
         format_ = QTextCharFormat()
@@ -476,7 +476,7 @@ if __name__ == "__main__":
     load_config()
     w.show()
     with Listener(on_press=on_press) as listener:
-        app.exec_()
+        app.exec()
         listener.stop()
         eddiecontroller.vcontroller.disconnect()
         listener.join()
