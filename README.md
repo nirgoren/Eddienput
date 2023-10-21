@@ -6,6 +6,18 @@ Eddienput (pronounced "edd-input") is a programmable virtual controller mainly a
 
 Install ViGEmBusSetup_x64.msi (provided with the program)
 
+## Build Instructions:
+
+* *Note*: This part is mainly for developers, users can just grab the latest release from the releases page.
+1. Clone the repo to some local folder
+1. Install [Python 3.12](https://www.python.org/downloads/release/python-3120/)
+1. Install [Poetry](https://python-poetry.org/docs/#installation)
+1. `cd` into the cloned repo's root directory
+1. Run `poetry shell`
+1. Run `./build.bat`
+
+The distributable directory containing the Eddienput executable should be found under `<repo_root/dist/Eddienput>`
+
 ## Usage:
 
 The most common usage scenario would be to define playbacks/mixups in a playbacks file, load the file and play it. You can do so by following these steps:
