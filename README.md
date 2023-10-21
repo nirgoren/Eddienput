@@ -16,7 +16,7 @@ Install ViGEmBusSetup_x64.msi (provided with the program)
 1. Run `poetry shell`
 1. Run `./build.bat`
 
-The distributable directory containing the Eddienput executable should be found under `<repo_root/dist/Eddienput>`
+The distributable directory containing the Eddienput executable should be found under `<repo_root>/dist/Eddienput`
 
 ## Usage:
 
