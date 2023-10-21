@@ -1,14 +1,14 @@
 from PyQt6.QtCore import QThreadPool
 
-from clock import Clock
+from eddienput.clock import Clock
 import time
 import random
 import json
-import vcontroller
-import key_emulation
+import eddienput.vcontroller as vcontroller
+import eddienput.key_emulation as key_emulation
+import eddienput.recording as recording
 import winsound
 import re
-import recording
 
 START_PLAYING_SOUND = "./sounds/boop.wav"
 END_PLAYING_SOUND = "./sounds/boop_low.wav"

@@ -10,7 +10,7 @@ from pynput.keyboard import Listener
 import XInput
 import sys
 from eddienput.common import ROOT_DIR
-from worker import Worker
+from eddienput.worker import Worker
 import eddienput.eddiecontroller as eddiecontroller
 import eddienput.recording as recording
 
@@ -286,10 +286,10 @@ def choose_rec_config_file():
 
 def choose_file(filter, directory):
     dlg = QFileDialog()
-    dlg.setFileMode(QFileDialog.ExistingFile)
+    dlg.setFileMode(QFileDialog.FileMode.ExistingFile)
     dlg.setNameFilter(filter)
     dlg.setDirectory(directory)
-    if dlg.exec_():
+    if dlg.exec():
         filenames = dlg.selectedFiles()
         return filenames[0]
 
