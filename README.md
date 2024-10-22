@@ -1,4 +1,5 @@
 # Eddienput
+![Github All Releases](https://img.shields.io/github/downloads/nirgoren/Eddienput/total.svg)
 
 Eddienput (pronounced "edd-input") is a programmable virtual controller mainly aimed at enhancing training mode for all fighting games on PC.
 
